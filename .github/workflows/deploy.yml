@@ -33,5 +33,11 @@ jobs:
               with:
                   path: "./dist/"
 
-            - name: Deploy to GitHub Pages
-              uses: actions/deploy-pages@v4
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@v4.7.3
+              with:
+                branch: gh-pages
+                folder: ./dist
+                token: ${{ secrets.GITHUB_TOKEN }}
+                clean: true
+                single-commit: true
