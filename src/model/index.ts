@@ -31,3 +31,10 @@ export interface Fish {
   Id: string
   displayname: string
 }
+
+export enum Quality {
+  BASE,
+  SILVER,
+  GOLD,
+  IRIDIUM
+}

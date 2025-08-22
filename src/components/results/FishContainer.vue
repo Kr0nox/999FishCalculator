@@ -8,6 +8,11 @@
           >Average Time per Cast:
           {{ store().strategy.calculateTimePerCast().toFixed(2) }} seconds</span
         >
+        <span class="flex items-center gap-1"
+          ><img src="@/assets/IridiumQuality.png" class="h-3" />Iridium Quality:
+          {{ (iridiumChance.nonPerfect * 100).toFixed(2) }}% | With Perfect Catch:
+          {{ (iridiumChance.perfect * 100).toFixed(2) }}%</span
+        >
       </div>
 
       <FishDisplay v-for="f in fish" :key="f.Id" :fish="f" :time-per-catch="getTimePerCatch(f)" />
@@ -20,6 +25,9 @@ import type { CalculatorResults } from '@/fishcalc'
 import ContainerComponent from '../ContainerComponent.vue'
 import FishDisplay from './FishDisplay.vue'
 import { store } from '@/store'
+import { computed } from 'vue'
+import { Quality } from '@/model'
+import { getChanceForQuality } from '@/math/Quality'
 
 defineProps({
   fish: {
@@ -42,4 +50,8 @@ function getTimePerCatch(fish: CalculatorResults): number | undefined {
   }
   return time
 }
+
+const iridiumChance = computed(() =>
+  getChanceForQuality(Quality.IRIDIUM, store().depth, store().fishingLevel, store().tackles)
+)
 </script>
