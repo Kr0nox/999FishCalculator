@@ -1,6 +1,6 @@
 <template>
   <ContainerComponent class="p-2!">
-    <div class="flex flex-col gap-2 time-root" :class="{'text-slate-400 disabled': disabled}">
+    <div class="time-root flex flex-col gap-2" :class="{ 'disabled text-slate-400': disabled }">
       <div class="flex items-end gap-2">
         <span @click="useRange = false">Single point in time</span>
         <label class="switch mb-0.5">
@@ -15,14 +15,35 @@
           <span class="text-start">{{ timeToString(numberToTime(startTime)) }}</span>
           <span class="float-end">{{ timeToString(numberToTime(endTime)) }}</span>
         </div>
-        <input v-model="startTime" type="range" min="600" max="2599" :disabled="disabled" @input="handleStartInput()" />
-        <input v-model="endTime" type="range" min="600" max="2599" :disabled="disabled" @input="handleEndInput()" />
+        <input
+          v-model="startTime"
+          type="range"
+          min="600"
+          max="2599"
+          :disabled="disabled"
+          @input="handleStartInput()"
+        />
+        <input
+          v-model="endTime"
+          type="range"
+          min="600"
+          max="2599"
+          :disabled="disabled"
+          @input="handleEndInput()"
+        />
         <div ref="bar" class="h-1.5 min-h-1.5 w-full rounded-full border border-gray-400"></div>
       </div>
 
       <div v-else class="flex flex-col gap-2">
         <span>{{ timeToString(numberToTime(startTime)) }}</span>
-        <input v-model="startTime" type="range" min="600" max="2599" :disabled="disabled" @input="handleSingleInput()" />
+        <input
+          v-model="startTime"
+          type="range"
+          min="600"
+          max="2599"
+          :disabled="disabled"
+          @input="handleSingleInput()"
+        />
       </div>
     </div>
   </ContainerComponent>
@@ -33,7 +54,6 @@ import ContainerComponent from '../ContainerComponent.vue'
 import { numberToTime, timeToNumber, timeToString } from '@/model/time'
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { store } from '@/store'
-
 
 const disabled = computed(() => store().bait.name == 'Magic')
 const useRange = ref(true)

@@ -1,12 +1,12 @@
 <template>
   <ContainerComponent class="border-orange-400! bg-orange-200 p-2!">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+    <div class="grid grid-cols-1 gap-2 md:grid-cols-2">
       <ContainerComponent
         v-for="location in LocationOptions"
         :key="location.name"
         :class="
           store().location.location == location.name
-            ? 'md:col-span-2 col-start-1 border-orange-600! bg-orange-400'
+            ? 'col-start-1 border-orange-600! bg-orange-400 md:col-span-2'
             : 'bg-slate-100'
         "
         class="cursor-pointer"

@@ -21,7 +21,7 @@
       <div class="relative flex flex-col gap-2">
         <div class="flex gap-2">
           <label>Add fish:</label>
-          <input ref="input" class="w-48 bg-white border border-slate-400" />
+          <input ref="input" class="w-48 border border-slate-400 bg-white" />
           <ContainerComponent
             class="cursor-pointer px-1! py-0!"
             @click="store().prioritisedFish = []"
