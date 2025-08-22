@@ -1,9 +1,13 @@
 <template>
   <ContainerComponent class="p-2!">
-    <div class="flex flex-col gap-2">
-      <div class="flex gap-2">
-        <input v-model="useRange" type="checkbox" />
-        <label>Calculate for time range</label>
+    <div class="flex flex-col gap-2 time-root" :class="{'text-slate-400 disabled': disabled}">
+      <div class="flex items-end gap-2">
+        <span @click="useRange = false">Single point in time</span>
+        <label class="switch mb-0.5">
+          <input v-model="useRange" type="checkbox" :disabled="disabled" />
+          <span class="slider round"></span>
+        </label>
+        <span @click="useRange = true">Time range</span>
       </div>
 
       <div v-if="useRange" class="double-slider relative flex flex-col gap-2">
@@ -11,14 +15,14 @@
           <span class="text-start">{{ timeToString(numberToTime(startTime)) }}</span>
           <span class="float-end">{{ timeToString(numberToTime(endTime)) }}</span>
         </div>
-        <input v-model="startTime" type="range" min="600" max="2599" @input="handleStartInput()" />
-        <input v-model="endTime" type="range" min="600" max="2599" @input="handleEndInput()" />
+        <input v-model="startTime" type="range" min="600" max="2599" :disabled="disabled" @input="handleStartInput()" />
+        <input v-model="endTime" type="range" min="600" max="2599" :disabled="disabled" @input="handleEndInput()" />
         <div ref="bar" class="h-1.5 min-h-1.5 w-full rounded-full border border-gray-400"></div>
       </div>
 
       <div v-else class="flex flex-col gap-2">
         <span>{{ timeToString(numberToTime(startTime)) }}</span>
-        <input v-model="startTime" type="range" min="600" max="2599" @input="handleSingleInput()" />
+        <input v-model="startTime" type="range" min="600" max="2599" :disabled="disabled" @input="handleSingleInput()" />
       </div>
     </div>
   </ContainerComponent>
@@ -27,9 +31,11 @@
 <script setup lang="ts">
 import ContainerComponent from '../ContainerComponent.vue'
 import { numberToTime, timeToNumber, timeToString } from '@/model/time'
-import { onMounted, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { store } from '@/store'
 
+
+const disabled = computed(() => store().bait.name == 'Magic')
 const useRange = ref(true)
 
 const startTime = ref(timeToNumber(store().startTime))
@@ -54,7 +60,7 @@ function fill() {
   const percent1 = ((startTime.value - 600) / (2599 - 600)) * 100
   const percent2 = ((endTime.value - 600) / (2599 - 600)) * 100
   if (fillBar.value) {
-    fillBar.value.style.background = `linear-gradient(to right, #dadae5 ${percent1}% , #3264fe ${percent1}% , #3264fe ${percent2}%, #dadae5 ${percent2}%)`
+    fillBar.value.style.background = `linear-gradient(to right, #dadae5 ${percent1}% , var(--color) ${percent1}% , var(--color) ${percent2}%, #dadae5 ${percent2}%)`
   }
 }
 
@@ -67,9 +73,23 @@ function handleSingleInput() {
 onMounted(() => {
   fill()
 })
+
+watch(useRange, () => {
+  if (useRange.value) {
+    nextTick(fill)
+  }
+})
 </script>
 
 <style scoped>
+.time-root {
+  --color: #3264fe;
+}
+
+.time-root.disabled {
+  --color: #7a8cc0;
+}
+
 .double-slider input[type='range'] {
   appearance: none;
   -webkit-appearance: none;
@@ -100,7 +120,7 @@ onMounted(() => {
   -webkit-appearance: none;
   height: 1em;
   width: 1em;
-  background-color: #3264fe;
+  background-color: var(--color);
   cursor: pointer;
   margin-top: -9px;
   pointer-events: auto;
@@ -113,7 +133,7 @@ onMounted(() => {
   width: 1em;
   cursor: pointer;
   border-radius: 50%;
-  background-color: #3264fe;
+  background-color: var(--color);
   pointer-events: auto;
   border: none;
 }
@@ -123,12 +143,75 @@ onMounted(() => {
   width: 1em;
   cursor: pointer;
   border-radius: 50%;
-  background-color: #3264fe;
+  background-color: var(--color);
   pointer-events: auto;
 }
 
 .double-slider input[type='range']:active::-webkit-slider-thumb {
   background-color: #ffffff;
-  border: 1px solid #3264fe;
+  border: 1px solid var(--color);
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 16px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.2s;
+  transition: 0.42;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+input:checked + .slider {
+  background-color: var(--color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--color);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 </style>
