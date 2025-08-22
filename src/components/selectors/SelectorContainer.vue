@@ -7,6 +7,8 @@
         <SeasonSelector />
         <TackleSelector />
         <TacticSelector />
+
+        <SaveManager />
       </div>
       <div class="col-start-2 row-start-1 flex flex-col gap-3">
         <BaitSelector />
@@ -33,4 +35,5 @@ import SliderOptions from './SliderOptions.vue'
 import TackleSelector from './TackleSelector.vue'
 import TimeSelector from './TimeSelector.vue'
 import TacticSelector from './TacticSelector.vue'
+import SaveManager from '../SaveManager.vue'
 </script>
