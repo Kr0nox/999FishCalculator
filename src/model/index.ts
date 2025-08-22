@@ -1,11 +1,16 @@
-export type Season = 'Spring'| 'Summer' | 'Fall' | 'Winter';
+export type Season = 'Spring' | 'Summer' | 'Fall' | 'Winter'
 
 export interface Time {
   hour: number
   minute: number
 }
 
-export type Tackle = 'Dressed Spinner' | 'Treasure Hunter' | 'Curiosity Lure' | 'Quality Bobber' | 'Other'
+export type Tackle =
+  | 'Dressed Spinner'
+  | 'Treasure Hunter'
+  | 'Curiosity Lure'
+  | 'Quality Bobber'
+  | 'Other'
 
 export interface Location {
   location: string
@@ -13,14 +18,14 @@ export interface Location {
 }
 
 interface BaseBait {
-  name: 'Magnet'|'Deluxe'|'Wild'|'Magic'|'Challenge'
+  name: 'Magnet' | 'Deluxe' | 'Wild' | 'Magic' | 'Challenge'
 }
 export interface TargetedBait {
   name: 'Targeted'
   fish: string
 }
 
-export type Bait = BaseBait|TargetedBait
+export type Bait = BaseBait | TargetedBait
 
 export interface Fish {
   Id: string

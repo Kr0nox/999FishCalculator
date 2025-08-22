@@ -1,10 +1,10 @@
 <template>
-  <ContainerComponent class="bg-emerald-200 border-emerald-400! p-2!">
-    <div class="flex gap-2 flex-col">
+  <ContainerComponent class="border-emerald-400! bg-emerald-200 p-2!">
+    <div class="flex flex-col gap-2">
       <ContainerComponent
         v-for="season in seasons"
         :key="season"
-        :class="store().season == season ? 'bg-emerald-400 border-emerald-600!' : 'bg-slate-100'"
+        :class="store().season == season ? 'border-emerald-600! bg-emerald-400' : 'bg-slate-100'"
         class="cursor-pointer"
         @click="store().season = season"
       >
@@ -12,7 +12,6 @@
           <img :src="SeasonImages[season]" class="h-4" />
           {{ season }}
         </div>
-        
       </ContainerComponent>
     </div>
   </ContainerComponent>
@@ -23,7 +22,6 @@ import ContainerComponent from '../ContainerComponent.vue'
 import type { Season } from '@/model'
 import { SeasonImages } from '@/model/images'
 import { store } from '@/store'
-
 
 const seasons: Season[] = ['Spring', 'Summer', 'Fall', 'Winter']
 </script>

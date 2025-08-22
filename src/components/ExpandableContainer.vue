@@ -1,7 +1,7 @@
 <template>
   <ContainerComponent>
     <div class="flex flex-col gap-2">
-      <h1 class="text-xl font-bold flex items-center gap-2" @click="expanded = !expanded">
+      <h1 class="flex items-center gap-2 text-xl font-bold" @click="expanded = !expanded">
         <FontAwesomeIcon class="h-4" :icon="expanded ? faChevronDown : faChevronRight" />
         <span>{{ title }}</span>
       </h1>
@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ContainerComponent from './ContainerComponent.vue'
-import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 defineProps({
   title: {

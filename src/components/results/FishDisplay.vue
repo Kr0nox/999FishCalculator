@@ -1,23 +1,23 @@
 <template>
-  <div class="grid gap-x-2 grid-cols-[auto_1fr_auto] grid-rows-2">
-    <img 
-      :src="getFishImage(fish.displayname)" 
-      class="col-start-1 row-start-1 row-span-2"
-      />
-    <span class="row-start-1 col-start-2 font-bold">{{ fish.displayname }}</span>
-    <span class="row-start-1 col-start-3 font-bold">{{ (fish.finalChance * 100).toFixed(2) }}%</span>
-    <span class="row-start-2 col-start-2 col-span-2 text-sm">
-      {{ primaryInformationText }}{{ secondaryInformationText ? ` | ${secondaryInformationText}` : '' }}
+  <div class="grid grid-cols-[auto_1fr_auto] grid-rows-2 gap-x-2">
+    <img :src="getFishImage(fish.displayname)" class="col-start-1 row-span-2 row-start-1" />
+    <span class="col-start-2 row-start-1 font-bold">{{ fish.displayname }}</span>
+    <span class="col-start-3 row-start-1 font-bold"
+      >{{ (fish.finalChance * 100).toFixed(2) }}%</span
+    >
+    <span class="col-span-2 col-start-2 row-start-2 text-sm">
+      {{ primaryInformationText
+      }}{{ secondaryInformationText ? ` | ${secondaryInformationText}` : '' }}
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { CalculatorResults } from '@/fishcalc';
-import { getFishImage } from '@/model/images';
-import { computed, type PropType } from 'vue';
+import type { CalculatorResults } from '@/fishcalc'
+import { getFishImage } from '@/model/images'
+import { computed, type PropType } from 'vue'
 
-type SecondaryInfo = { kind: 'perStack' } | { kind: 'forTime', time: number }
+type SecondaryInfo = { kind: 'perStack' } | { kind: 'forTime'; time: number }
 
 const props = defineProps({
   fish: {
@@ -49,7 +49,7 @@ const secondaryInformationText = computed(() => {
     const totalTime = props.timePerCatch * 999
     const timeInHours = (totalTime / 3600).toFixed(2)
     return `${timeInHours} h/Stack`
-  } 
+  }
   if (props.secondaryInformation.kind == 'forTime') {
     const catches = Math.round(props.secondaryInformation.time / props.timePerCatch)
     const hours = (props.secondaryInformation.time / 3600).toFixed(2)

@@ -8,10 +8,9 @@
       :min="min"
       :max="max"
       :step="step"
-      class="col-start-1 col-span-3 row-start-2"
+      class="col-span-3 col-start-1 row-start-2"
     />
   </div>
-  
 </template>
 
 <script setup lang="ts">
@@ -37,5 +36,4 @@ defineProps({
 const model = defineModel<number>({
   default: 0
 })
-
 </script>

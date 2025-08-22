@@ -1,4 +1,4 @@
-import type { Location } from "."
+import type { Location } from '.'
 
 export interface LocationOption {
   name: string
@@ -49,7 +49,7 @@ export const LocationOptions: LocationOption[] = [
 ]
 
 interface CalcLocation {
-  location: string 
+  location: string
   subLocation: string
   bobberArea: string
   mineArea: string
@@ -121,6 +121,9 @@ export function getCalculatorLocation(l: Location): CalcLocation {
   }
 
   return {
-    location,subLocation,bobberArea,mineArea
+    location,
+    subLocation,
+    bobberArea,
+    mineArea
   }
 }

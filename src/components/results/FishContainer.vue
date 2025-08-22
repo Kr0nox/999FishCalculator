@@ -1,17 +1,17 @@
 <template>
-  <ContainerComponent class="p-2! bg-slate-100">
+  <ContainerComponent class="bg-slate-100 p-2!">
     <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
-      <h1 class="font-bold text-xl">Fish</h1>
+      <h1 class="text-xl font-bold">Fish</h1>
       <FishDisplay v-for="f in fish" :key="f.Id" :fish="f" :time-per-catch="getTimePerCatch(f)" />
     </div>
   </ContainerComponent>
 </template>
 
 <script setup lang="ts">
-import type { CalculatorResults } from '@/fishcalc';
-import ContainerComponent from '../ContainerComponent.vue';
-import FishDisplay from './FishDisplay.vue';
-import { store } from '@/store';
+import type { CalculatorResults } from '@/fishcalc'
+import ContainerComponent from '../ContainerComponent.vue'
+import FishDisplay from './FishDisplay.vue'
+import { store } from '@/store'
 
 defineProps({
   fish: {
@@ -20,7 +20,7 @@ defineProps({
   }
 })
 
-function getTimePerCatch(fish: CalculatorResults): number|undefined {
+function getTimePerCatch(fish: CalculatorResults): number | undefined {
   const time = store().strategy.calculateTimePerCatch(fish)
   if (time === undefined) {
     return undefined

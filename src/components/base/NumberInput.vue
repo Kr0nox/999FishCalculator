@@ -1,9 +1,14 @@
 <template>
-  <input v-model="inputModel" :disabled="disabled" type="text" class="w-8 bg-white border border-slate-400 rounded px-1 py-0 text-sm" />
+  <input
+    v-model="inputModel"
+    :disabled="disabled"
+    type="text"
+    class="w-8 rounded border border-slate-400 bg-white px-1 py-0 text-sm"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 defineProps({
   disabled: {
@@ -19,11 +24,11 @@ const model = defineModel<number>({
 const inputModel = computed({
   get: () => model.value.toString(),
   set: (value: string) => {
-    const parsedValue = parseFloat(value);
+    const parsedValue = parseFloat(value)
     if (!isNaN(parsedValue)) {
-      model.value = parsedValue;
+      model.value = parsedValue
     } else {
-      model.value = 0; // Reset to 0 if the input is invalid
+      model.value = 0 // Reset to 0 if the input is invalid
     }
   }
 })

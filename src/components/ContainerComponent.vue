@@ -1,5 +1,5 @@
 <template>
-  <div class="px-1 py-0.5 rounded-md border-2 border-slate-400 overflow-hidden">
+  <div class="overflow-hidden rounded-md border-2 border-slate-400 px-1 py-0.5">
     <slot />
   </div>
 </template>

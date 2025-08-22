@@ -242,11 +242,7 @@
         "Condition": "DAYS_PLAYED 28",
         "Id": "(O)688|(O)689|(O)690",
         "ItemId": null,
-        "RandomItemId": [
-          "(O)688",
-          "(O)689",
-          "(O)690"
-        ],
+        "RandomItemId": ["(O)688", "(O)689", "(O)690"],
         "MaxItems": null,
         "MinStack": -1,
         "MaxStack": -1,
@@ -406,14 +402,7 @@
         "Condition": null,
         "Id": "(O)167|(O)168|(O)169|(O)170|(O)171|(O)172",
         "ItemId": null,
-        "RandomItemId": [
-          "(O)167",
-          "(O)168",
-          "(O)169",
-          "(O)170",
-          "(O)171",
-          "(O)172"
-        ],
+        "RandomItemId": ["(O)167", "(O)168", "(O)169", "(O)170", "(O)171", "(O)172"],
         "MaxItems": null,
         "MinStack": -1,
         "MaxStack": -1,
@@ -657,17 +646,13 @@
           "Width": 28,
           "Height": 36
         },
-        "CrabPotFishTypes": [
-          "freshwater"
-        ],
+        "CrabPotFishTypes": ["freshwater"],
         "CrabPotJunkChance": 0.45
       },
       "Ocean": {
         "DisplayName": null,
         "Position": null,
-        "CrabPotFishTypes": [
-          "ocean"
-        ],
+        "CrabPotFishTypes": ["ocean"],
         "CrabPotJunkChance": 0.2
       }
     },
@@ -793,12 +778,7 @@
         "Condition": null,
         "Id": "(O)723|(O)393|(O)719|(O)718",
         "ItemId": null,
-        "RandomItemId": [
-          "(O)723",
-          "(O)393",
-          "(O)719",
-          "(O)718"
-        ],
+        "RandomItemId": ["(O)723", "(O)393", "(O)719", "(O)718"],
         "MaxItems": null,
         "MinStack": -1,
         "MaxStack": -1,
@@ -2352,10 +2332,7 @@
         "Condition": null,
         "Id": "(O)388|(O)390",
         "ItemId": null,
-        "RandomItemId": [
-          "(O)388",
-          "(O)390"
-        ],
+        "RandomItemId": ["(O)388", "(O)390"],
         "MaxItems": null,
         "MinStack": -1,
         "MaxStack": -1,
@@ -3648,9 +3625,7 @@
       "Default": {
         "DisplayName": null,
         "Position": null,
-        "CrabPotFishTypes": [
-          "ocean"
-        ],
+        "CrabPotFishTypes": ["ocean"],
         "CrabPotJunkChance": 0.2
       }
     },
@@ -3786,11 +3761,7 @@
         "Condition": null,
         "Id": "(O)798|(O)799|(O)800",
         "ItemId": null,
-        "RandomItemId": [
-          "(O)798",
-          "(O)799",
-          "(O)800"
-        ],
+        "RandomItemId": ["(O)798", "(O)799", "(O)800"],
         "MaxItems": null,
         "MinStack": -1,
         "MaxStack": -1,
@@ -12376,9 +12347,7 @@
       "Default": {
         "DisplayName": null,
         "Position": null,
-        "CrabPotFishTypes": [
-          "ocean"
-        ],
+        "CrabPotFishTypes": ["ocean"],
         "CrabPotJunkChance": 0.2
       }
     },
@@ -13848,9 +13817,7 @@
       "Ocean": {
         "DisplayName": null,
         "Position": null,
-        "CrabPotFishTypes": [
-          "ocean"
-        ],
+        "CrabPotFishTypes": ["ocean"],
         "CrabPotJunkChance": 0.2
       }
     },
