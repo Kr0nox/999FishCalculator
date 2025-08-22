@@ -357,7 +357,6 @@ function recursiveMultiply(chanceArray) {
     }
     resultArray[0] = tempArray2
   }
-  // console.log([[1]].concat(resultArray))
   return [[1]].concat(resultArray)
 }
 

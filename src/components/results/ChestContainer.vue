@@ -1,6 +1,6 @@
 <template>
   <ExpandableContainer title="Chests" class="bg-slate-100">
-    <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
+    <div class="flex flex-col gap-2 md:max-h-full md:flex-1 md:overflow-auto">
       <div>Chest chance: {{ (store().chestChance * 100).toFixed(2) }}%</div>
       <RoeDisplay
         v-for="f in baitFish"

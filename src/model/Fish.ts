@@ -25,3 +25,11 @@ export const BaitableFish: Fish[] = FishList.filter(
       'Trash'
     ].includes(fish.displayname)
 )
+
+export function checkIdEquality(id1: string, id2: string) {
+  return getIdNumber(id1) == getIdNumber(id2)
+}
+
+function getIdNumber(id: string): string {
+  return id.startsWith('(') ? id.substring(3) : id
+}

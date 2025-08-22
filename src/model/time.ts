@@ -19,7 +19,10 @@ export function timeToString(time: Time): string {
 
 export function numberToTime(number: number): Time {
   const hour = Math.floor(number / 100)
-  const tenMinuteRaw = Math.round(0.6 * ((number / 10) % 10))
+  let tenMinuteRaw = Math.round(0.6 * ((number / 10) % 10))
+  if (tenMinuteRaw == 6) {
+    tenMinuteRaw -= 1
+  }
   const minute = 10 * tenMinuteRaw
   return {
     hour: hour >= 24 ? hour - 24 : hour,

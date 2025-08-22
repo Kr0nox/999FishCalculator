@@ -1,8 +1,9 @@
-import { type CheckedItems, type Configuration } from '@/fishcalc'
+import { getChances, type CheckedItems, type Configuration } from '@/fishcalc'
 import { getTimeToBite } from '@/math/BiteTime'
 import { getChestChance } from '@/math/ChestChance'
 import { strategyFactory } from '@/math/Strategy'
-import type { Tackle, Bait, Location, Season, Time } from '@/model'
+import type { Tackle, Bait, Location, Season, Time, Fish } from '@/model'
+import { checkIdEquality } from '@/model/Fish'
 import { getCalculatorLocation } from '@/model/location'
 import { timeToNumber } from '@/model/time'
 import { defineStore } from 'pinia'
@@ -13,7 +14,7 @@ export const store = defineStore('store', () => {
   const season = ref<Season>('Spring')
   const startTime = ref<Time>({ hour: 6, minute: 0 })
   const endTime = ref<Time>({ hour: 26, minute: 0 })
-  const bait = ref<Bait>({ name: 'Magic' })
+  const bait = ref<Bait>({ name: 'Deluxe' })
   const tackles = ref<Tackle[]>(['Dressed Spinner', 'Dressed Spinner'])
 
   const fishingLevel = ref(10)
@@ -41,6 +42,7 @@ export const store = defineStore('store', () => {
     selectedSeason: bait.value.name == 'Magic' ? 'MagicBait' : season.value.toLowerCase(),
     selectedLocation: calculatorLocation.value.location,
     selectedSubArea: calculatorLocation.value.subLocation,
+    selectedBobberLocation: calculatorLocation.value.bobberArea,
     fishingLevel: fishingLevel.value,
     waterDepth: depth.value,
     luckBuffs: luck.value,
@@ -58,6 +60,15 @@ export const store = defineStore('store', () => {
   const chestCancelTime = ref(5)
   const cancelOtherFish = ref(false)
   const cancelOtherFishTime = ref(2)
+  const prioritisedFish = ref<Fish[]>([])
+
+  const results = computed(() => getChances(calculatorConfiguration.value))
+
+  const prioritisedChanceFish = computed(() =>
+    prioritisedFish.value.map(
+      (f) => results.value.find((r) => checkIdEquality(f.Id, r.Id)) ?? { ...f, finalChance: 0 }
+    )
+  )
 
   const strategy = computed(() =>
     strategyFactory(
@@ -68,13 +79,15 @@ export const store = defineStore('store', () => {
       cancelOtherFish.value
         ? {
             cancelTime: cancelOtherFishTime.value,
-            prioritisedFish: []
+            prioritisedFish: prioritisedChanceFish.value
           }
         : undefined
     )
   )
 
   return {
+    results,
+    prioritisedFish,
     chestChance,
     strategy,
     cancelChests,

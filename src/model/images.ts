@@ -1,4 +1,3 @@
-import { getFishParameters } from '@/fishcalc/lib/fishdata'
 import type { Season, Tackle } from '.'
 
 export const SeasonImages: Record<Season, string> = {
@@ -120,13 +119,10 @@ const FishImages: Record<string, string> = {
   Trash: 'https://stardewvalleywiki.com/mediawiki/images/7/7c/Trash_%28item%29.png'
 }
 
-export function getFishImage(idOrName: string): string | undefined {
-  const image = FishImages[idOrName]
-  if (image) {
-    return image
+export function getFishImage(name: string): string | undefined {
+  if (name.includes('(')) {
+    const actualName = name.substring(0, name.indexOf('(') - 1)
+    return FishImages[actualName]
   }
-  const name = getFishParameters(idOrName)?.name
-  if (name) {
-    return FishImages[name]
-  }
+  return FishImages[name]
 }

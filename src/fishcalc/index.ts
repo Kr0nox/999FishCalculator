@@ -26,6 +26,7 @@ interface TimeLessConfiguration {
   selectedSeason: string
   selectedLocation: string
   selectedSubArea: string
+  selectedBobberLocation: string
   fishingLevel: number
   waterDepth: number
   luckBuffs: number
@@ -83,17 +84,21 @@ function getAppendedFishData(locationFishData: any[]) {
   return tempFishParamArray
 }
 
-export function getFilteredFishData(c: InternalConfiguration) {
+type BobberArea = { X: number; Y: number; Width: number; Height: number }
+
+function deepEqual(a?: BobberArea, b?: BobberArea) {
+  if (!a || !b) return false
+  return a.X == b.X && a.Y == b.Y && a.Width == b.Width && a.Height == b.Height
+}
+
+export function getFilteredFishData(c: InternalConfiguration, appendedFishData: any[]) {
   const checkedItems = c.checkedItems
   const selectedSeason = c.selectedSeason
-  const selectedLocation = c.selectedLocation
   const selectedSubArea = c.selectedSubArea
   const fishingLevel = c.fishingLevel
   const waterDepth = c.waterDepth
   const timeOfDay = c.timeOfDay
-  const appendedFishData = getAppendedFishData(
-    getFishFromLocationAndSeason(selectedLocation, selectedSeason)
-  )
+  const selectedBobberArea = c.selectedBobberLocation
   let tempFishParamArray = appendedFishData.slice()
 
   // filter sub area, skip, cause no sub area
@@ -103,13 +108,13 @@ export function getFilteredFishData(c: InternalConfiguration) {
   tempFishParamArray = correctSubArea
 
   // filter bobber position, skip cause no bobber area
-  /*let bobberDictionary = {
+  let bobberDictionary: Record<string, BobberArea> = {
     Waterfall: { X: 51, Y: 100, Width: 15, Height: 255 },
-    SubmarinePier: { X: 0, Y: 32, Width: 12, Height: 255 },
-  };*/
+    SubmarinePier: { X: 0, Y: 32, Width: 12, Height: 255 }
+  }
   let filterBobber = tempFishParamArray.filter(
-    (fish) => !fish.BobberPosition /*||
-      _.isEqual(bobberDictionary[selectedBobberArea], fish.BobberPosition)*/
+    (fish) =>
+      !fish.BobberPosition || deepEqual(bobberDictionary[selectedBobberArea], fish.BobberPosition)
   )
   tempFishParamArray = filterBobber
 
@@ -254,7 +259,6 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
   const waterDepth = c.waterDepth
   const fishingLevel = c.fishingLevel
   const dailyLuck = c.dailyLuck
-  console.log('Filtered', filteredFishData)
 
   const jellyMode = 'longterm'
 
@@ -426,11 +430,13 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
         }*/
     }
 
-    tempFishParamArray.push({
-      Id: 'trash',
-      displayname: 'Trash',
-      finalChance: tempTrashRate
-    })
+    if (tempTrashRate > 0.004) {
+      tempFishParamArray.push({
+        Id: 'trash',
+        displayname: 'Trash',
+        finalChance: tempTrashRate
+      })
+    }
     tempFishParamArray.sort((a, b) => b.finalChance - a.finalChance)
     return tempFishParamArray
   } else {
@@ -493,28 +499,43 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
 }
 
 export function getChances(configuration: Configuration) {
-  /*const chances: Record<string, CalculatorResults[]> = {}
-  const endTime =
-    configuration.startTime == configuration.endTime
-      ? configuration.startTime + 1
-      : configuration.endTime
-  let d = 0
-  for (let t = configuration.startTime; t < endTime; t += 10) {
-    const c = { ...configuration, timeOfDay: t }
-    const timeChances = getChance(getFilteredFishData(c), c)
-    console.log(t, timeChances)
-    for (const fish of timeChances) {
+  const chances: Record<string, CalculatorResults[]> = {}
+  const appendedFishData = getAppendedFishData(
+    getFishFromLocationAndSeason(configuration.selectedLocation, configuration.selectedSeason)
+  )
+  let divisor = 0
+  if (configuration.selectedSeason == 'MagicBait') {
+    const c = { ...configuration, timeOfDay: 600 }
+    const magicChances = getChance(getFilteredFishData(c, appendedFishData), c)
+    for (const fish of magicChances) {
       if (!chances[fish.Id]) {
         chances[fish.Id] = []
       }
       chances[fish.Id].push(fish)
     }
-    d++
+    divisor = 1
+  } else {
+    const endTime =
+      configuration.startTime == configuration.endTime
+        ? configuration.startTime + 1
+        : configuration.endTime
+    for (let t = configuration.startTime; t < endTime; t += 100) {
+      const c = { ...configuration, timeOfDay: t }
+      const timeChances = getChance(getFilteredFishData(c, appendedFishData), c)
+      for (const fish of timeChances) {
+        if (!chances[fish.Id]) {
+          chances[fish.Id] = []
+        }
+        chances[fish.Id].push(fish)
+      }
+      divisor++
+    }
   }
+
   const finalChances: CalculatorResults[] = []
   for (const [id, fishChances] of Object.entries(chances)) {
     const totalChance = fishChances.reduce((sum, fish) => sum + fish.finalChance, 0)
-    const averageChance = totalChance / d
+    const averageChance = totalChance / divisor
     finalChances.push({
       Id: id,
       displayname: fishChances[0].displayname,
@@ -522,7 +543,5 @@ export function getChances(configuration: Configuration) {
     })
   }
   finalChances.sort((a, b) => b.finalChance - a.finalChance)
-  return finalChances*/
-  const c = { ...configuration, timeOfDay: configuration.startTime }
-  return getChance(getFilteredFishData(c), c)
+  return finalChances
 }

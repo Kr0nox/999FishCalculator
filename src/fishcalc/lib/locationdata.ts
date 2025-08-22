@@ -19,7 +19,6 @@ export function getFishFromLocationAndSeason(location: string, season: string) {
   } else {
     filterSeason = noBoss
   }
-  console.info('all fish in season', season, location, filterSeason)
   const locationFishData = filterSeason
   return locationFishData
 }

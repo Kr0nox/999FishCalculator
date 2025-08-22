@@ -1,15 +1,14 @@
 import type { CalculatorResults } from '@/fishcalc'
+import { checkIdEquality } from '@/model/Fish'
 
 abstract class Strategy {
-  protected timePerCast: number
+  protected timePerCast!: number
 
   constructor(
     protected catchTime: number,
     protected timeToBite: number,
     protected catchOverhead: number
-  ) {
-    this.timePerCast = this.calculateTimePerCast()
-  }
+  ) {}
   /**
    * Calculates the time a single cast takes
    * @returns Average duration of a cast
@@ -20,6 +19,11 @@ abstract class Strategy {
 }
 
 class DefaultStrategy extends Strategy {
+  constructor(catchTime: number, timeToBite: number, catchOverhead: number) {
+    super(catchTime, timeToBite, catchOverhead)
+    this.timePerCast = this.calculateTimePerCast()
+  }
+
   calculateTimePerCast() {
     const timePerCatch = this.catchTime + this.timeToBite + this.catchOverhead
     return timePerCatch
@@ -41,19 +45,20 @@ class CancelOtherFishStrategy extends Strategy {
   ) {
     super(catchTime, timeToBite, catchOverhead)
     this.priorityChance = prioritisedFish.reduce((acc, fish) => acc + fish.finalChance, 0)
+    this.timePerCast = this.calculateTimePerCast()
   }
 
   calculateTimePerCast() {
     const timePerNonPriorityCatch = this.cancelTime + this.timeToBite + this.catchOverhead
     const timePerPriorityCatch = this.catchTime + this.timeToBite + this.catchOverhead
     return (
-      this.priorityChance * timePerNonPriorityCatch +
-      (1 - this.priorityChance) * timePerPriorityCatch
+      this.priorityChance * timePerPriorityCatch +
+      (1 - this.priorityChance) * timePerNonPriorityCatch
     )
   }
 
   calculateTimePerCatch(fish: CalculatorResults) {
-    if (!this.prioritisedFish.find((f) => f.Id === fish.Id)) {
+    if (!this.prioritisedFish.find((f) => checkIdEquality(f.Id, fish.Id))) {
       return undefined
     }
     return this.timePerCast / fish.finalChance
@@ -69,6 +74,7 @@ class CancelNoChestStrategy extends Strategy {
     catchOverhead: number
   ) {
     super(catchTime, timeToBite, catchOverhead)
+    this.timePerCast = this.calculateTimePerCast()
   }
 
   calculateTimePerCast() {
@@ -96,6 +102,7 @@ class CancelNoChestOtherFishStrategy extends Strategy {
   ) {
     super(catchTime, timeToBite, catchOverhead)
     this.priorityChance = prioritisedFish.reduce((acc, fish) => acc + fish.finalChance, 0)
+    this.timePerCast = this.calculateTimePerCast()
   }
 
   calculateTimePerCast() {
@@ -113,7 +120,7 @@ class CancelNoChestOtherFishStrategy extends Strategy {
   }
 
   calculateTimePerCatch(fish: CalculatorResults) {
-    if (!this.prioritisedFish.find((f) => f.Id === fish.Id)) {
+    if (!this.prioritisedFish.find((f) => checkIdEquality(f.Id, fish.Id))) {
       return undefined
     }
     return this.timePerCast / (fish.finalChance * this.chestChance)

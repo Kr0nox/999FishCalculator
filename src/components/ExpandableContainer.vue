@@ -1,11 +1,11 @@
 <template>
   <ContainerComponent>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 md:max-h-full md:overflow-hidden">
       <h1 class="flex items-center gap-2 text-xl font-bold" @click="expanded = !expanded">
         <FontAwesomeIcon class="h-4" :icon="expanded ? faChevronDown : faChevronRight" />
         <span>{{ title }}</span>
       </h1>
-      <div v-if="expanded" class="flex-1">
+      <div v-if="expanded" class="flex-1 md:overflow-hidden flex">
         <slot />
       </div>
     </div>

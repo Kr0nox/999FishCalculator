@@ -13,7 +13,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint --max-warnings 0",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.0.0",
@@ -34,7 +35,9 @@
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.31.0",
     "eslint-plugin-vue": "~10.3.0",
+    "husky": "^9.1.7",
     "jiti": "^2.4.2",
+    "lint-staged": "^16.1.5",
     "npm-run-all2": "^8.0.4",
     "prettier": "3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
@@ -42,5 +45,14 @@
     "vite": "^7.0.6",
     "vite-plugin-vue-devtools": "^8.0.0",
     "vue-tsc": "^3.0.4"
+  },
+  "lint-staged": {
+    "*.{html,css,ts,tsx}": [
+      "npm run lint",
+      "npm run format"
+    ],
+    "*.json": [
+      "npm run format"
+    ]
   }
 }

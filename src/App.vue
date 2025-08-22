@@ -4,8 +4,8 @@
   >
     <SelectorContainer class="col-start-1 row-start-1 min-h-full w-full" />
     <div class="flex flex-col gap-5 md:max-h-full md:overflow-hidden">
-      <FishContainer class="w-fill top col-start-2" :fish="results"></FishContainer>
-      <ChestContainer class="w-fill bottom h-fit max-h-1/2" :fish="results" />
+      <FishContainer class="w-fill top col-start-2" :fish="store().results"></FishContainer>
+      <ChestContainer class="w-fill bottom h-fit max-h-1/2" :fish="store().results" />
     </div>
     <div class="col-span-2 row-start-2 text-xs text-white">
       Writen by <a href="https://www.github.com/Kr0nox">Kronox</a> This tool is heavily inspired by
@@ -19,14 +19,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { getChances } from './fishcalc'
 import { store } from './store'
 import FishContainer from './components/results/FishContainer.vue'
 import SelectorContainer from './components/selectors/SelectorContainer.vue'
 import ChestContainer from './components/results/ChestContainer.vue'
-
-const results = computed(() => getChances(store().calculatorConfiguration))
 </script>
 
 <style scoped>
