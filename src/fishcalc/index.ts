@@ -3,6 +3,7 @@
 import {
   getJellyChance,
   nonFishItems,
+  rollFishPool,
   rollFishPoolWithTargetedBait,
   targetedBaitSingle
 } from './lib/calculateChance.ts'
@@ -253,6 +254,10 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
   const waterDepth = c.waterDepth
   const fishingLevel = c.fishingLevel
   const dailyLuck = c.dailyLuck
+  console.log('Filtered', filteredFishData)
+
+  const jellyMode = 'longterm'
+
   let tempFishParamArray: CalculatorResults[] = []
   let tempTrashRate = 1
 
@@ -265,8 +270,19 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
 
   // get jelly chance
   let jelly = filteredFishData.find((jelly) => jelly.Id && jelly.Id.match(/Jelly/))
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  jelly && (jelly.weight = getJellyChance(filteredFishData, luckBuffs))
+  if (jellyMode === 'longterm') {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    jelly && (jelly.weight = getJellyChance(filteredFishData, luckBuffs))
+  } else if (jellyMode === 'nextcatch') {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    jelly && (jelly.weight = jelly.Chance + jelly.ChanceBoostPerLuckLevel * luckBuffs)
+  } else if (jellyMode === 'goodseed') {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    jelly && (jelly.weight = 1)
+  } else if (jellyMode === 'badseed') {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    jelly && (jelly.weight = 0)
+  }
 
   if (filteredFishData.length > 0) {
     // get chance
@@ -301,6 +317,15 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
           tempFishParamArray.push(fish)
         }
       }
+    } else {
+      for (let i in filteredFishData) {
+        let fish = filteredFishData[i]
+        fish.finalChance = rollFishPool(filteredFishData, i)
+        tempTrashRate -= fish.finalChance
+        tempFishParamArray.push(fish)
+      }
+      tempTrashRate = Math.max(0, tempTrashRate)
+      //setTrashRate(Math.max(0, tempTrashRate));
     }
 
     // handle OR fish (like submarine pier)
@@ -468,7 +493,7 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
 }
 
 export function getChances(configuration: Configuration) {
-  const chances: Record<string, CalculatorResults[]> = {}
+  /*const chances: Record<string, CalculatorResults[]> = {}
   const endTime =
     configuration.startTime == configuration.endTime
       ? configuration.startTime + 1
@@ -477,6 +502,7 @@ export function getChances(configuration: Configuration) {
   for (let t = configuration.startTime; t < endTime; t += 10) {
     const c = { ...configuration, timeOfDay: t }
     const timeChances = getChance(getFilteredFishData(c), c)
+    console.log(t, timeChances)
     for (const fish of timeChances) {
       if (!chances[fish.Id]) {
         chances[fish.Id] = []
@@ -496,5 +522,7 @@ export function getChances(configuration: Configuration) {
     })
   }
   finalChances.sort((a, b) => b.finalChance - a.finalChance)
-  return finalChances
+  return finalChances*/
+  const c = { ...configuration, timeOfDay: configuration.startTime }
+  return getChance(getFilteredFishData(c), c)
 }

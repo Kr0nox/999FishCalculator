@@ -2,25 +2,24 @@
 // @ts-nocheck
 import locationData from '../data/Locations.json'
 
-export const getFishFromLocationAndSeason = (location: string, season: string) => {
+export function getFishFromLocationAndSeason(location: string, season: string) {
   const noBoss = locationData[location].Fish.filter((fish) => !fish.IsBossFish)
 
-  const filterSeason = []
-  for (const fish of noBoss) {
-    const seasonCheck = !fish.Season || (fish.Season && fish.Season.toLowerCase() == season)
-    const conditionCheck =
-      !fish.Condition ||
-      (fish.Condition && !fish.Condition.includes('SEASON')) ||
-      (fish.Condition && fish.Condition.includes('LEGENDARY_FAMILY')) ||
-      (fish.Condition && fish.Condition.includes(season))
-    const magicCheck = fish.RequireMagicBait === false
-    //console.log(fishName(fish.Id), fish.Season, fish.Condition, seasonCheck, conditionCheck, magicCheck)
-    if (seasonCheck && conditionCheck && magicCheck) {
-      filterSeason.push(fish)
-    }
+  let filterSeason = []
+  if (season != 'MagicBait') {
+    filterSeason = noBoss.filter(
+      (fish) =>
+        (!fish.Season || (fish.Season && fish.Season.toLowerCase() == season)) &&
+        (!fish.Condition ||
+          (fish.Condition && !fish.Condition.includes('SEASON')) ||
+          (fish.Condition && fish.Condition.includes('LEGENDARY_FAMILY')) ||
+          (fish.Condition && fish.Condition.includes(season))) &&
+        fish.RequireMagicBait === false
+    )
+  } else {
+    filterSeason = noBoss
   }
-
-  // console.log("all fish in season: ", filterSeason.map(i => fishName(i.Id)))
+  console.info('all fish in season', season, location, filterSeason)
   const locationFishData = filterSeason
   return locationFishData
 }

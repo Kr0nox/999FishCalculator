@@ -38,7 +38,7 @@ export const store = defineStore('store', () => {
     targetedBaitName: bait.value.name === 'Targeted' ? bait.value.fish : '',
     checkedItems: checkedItems.value,
     dailyLuck: 0,
-    selectedSeason: season.value.toLowerCase(),
+    selectedSeason: bait.value.name == 'Magic' ? 'MagicBait' : season.value.toLowerCase(),
     selectedLocation: calculatorLocation.value.location,
     selectedSubArea: calculatorLocation.value.subLocation,
     fishingLevel: fishingLevel.value,
