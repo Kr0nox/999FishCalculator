@@ -6,7 +6,7 @@
         <label>Calculate for time range</label>
       </div>
 
-      <div v-if="useRange" class="relative flex flex-col gap-2 double-slider">
+      <div v-if="useRange" class="double-slider relative flex flex-col gap-2">
         <div class="w-full">
           <span class="text-start">{{ timeToString(numberToTime(startTime)) }}</span>
           <span class="float-end">{{ timeToString(numberToTime(endTime)) }}</span>

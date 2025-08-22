@@ -107,6 +107,6 @@ onMounted(() => {
 }
 
 .autocomplete {
-  @apply max-h-10 overflow-y-auto z-[60];
+  @apply z-[60] max-h-10 overflow-y-auto;
 }
 </style>

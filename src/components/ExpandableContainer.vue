@@ -5,7 +5,7 @@
         <FontAwesomeIcon class="h-4" :icon="expanded ? faChevronDown : faChevronRight" />
         <span>{{ title }}</span>
       </h1>
-      <div v-if="expanded" class="flex-1 md:overflow-hidden flex">
+      <div v-if="expanded" class="flex flex-1 md:overflow-hidden">
         <slot />
       </div>
     </div>

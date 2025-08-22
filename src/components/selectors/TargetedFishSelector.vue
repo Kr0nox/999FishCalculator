@@ -10,7 +10,7 @@
     "
   >
     <ContainerComponent
-      class="z-50 max-h-[90vh] w-[80vw] bg-slate-200 p-2! md:h-[60vh] blur-0"
+      class="blur-0 z-50 max-h-[90vh] w-[80vw] bg-slate-200 p-2! md:h-[60vh]"
       @click="
         (e: Event) => {
           e.preventDefault()
@@ -18,7 +18,7 @@
         }
       "
     >
-      <div class="flex flex-col gap-2 relative">
+      <div class="relative flex flex-col gap-2">
         <div class="flex gap-2">
           <label>Add fish:</label>
           <input ref="input" class="w-48" />
@@ -32,15 +32,18 @@
           <div
             v-for="fish in store().prioritisedFish"
             :key="fish.Id"
-            class="flex w-64 gap-3 rounded bg-slate-300 px-2 py-1 items-center"
+            class="flex w-64 items-center gap-3 rounded bg-slate-300 px-2 py-1"
           >
             <img :src="getFishImage(fish.displayname)" class="h-6" />
             <span class="flex-1">{{ fish.displayname }}</span>
             <FontAwesomeIcon class="cursor-pointer" :icon="faTrashAlt" @click="removeFish(fish)" />
           </div>
         </div>
-        <div class="absolute -top-2 -right-2 border-l-2 border-b-2 border-slate-400 p-1 pl-2 pb-2 rounded-bl-full cursor-pointer hover:bg-slate-300" @click="emit('close')">
-          <FontAwesomeIcon class="w-5 h-5" :icon="faX" />
+        <div
+          class="absolute -top-2 -right-2 cursor-pointer rounded-bl-full border-b-2 border-l-2 border-slate-400 p-1 pb-2 pl-2 hover:bg-slate-300"
+          @click="emit('close')"
+        >
+          <FontAwesomeIcon class="h-5 w-5" :icon="faX" />
         </div>
       </div>
     </ContainerComponent>

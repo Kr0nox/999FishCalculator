@@ -1,8 +1,14 @@
 <template>
   <div class="flex items-center gap-x-2">
-    <div class="h-8 w-12 grid grid-cols-[24px_24px]">
-      <img src="https://stardewvalleywiki.com/mediawiki/images/5/56/Roe.png" class="col-start-2 row-start-1 h-6 z-0" />
-      <img :src="getFishImage(fish.displayname)" class="col-start-1 col-span-2 row-start-1 h-8 z-10" />
+    <div class="grid h-8 w-12 grid-cols-[24px_24px]">
+      <img
+        src="https://stardewvalleywiki.com/mediawiki/images/5/56/Roe.png"
+        class="z-0 col-start-2 row-start-1 h-6"
+      />
+      <img
+        :src="getFishImage(fish.displayname)"
+        class="z-10 col-span-2 col-start-1 row-start-1 h-8"
+      />
     </div>
     <span class="col-start-2 row-start-1 text-sm">{{
       timePerCatch !== undefined ? text : 'Fish will not be caught'
@@ -29,7 +35,7 @@ const props = defineProps({
 
 const timePerChest = computed(() => {
   if (store().cancelChests) {
-    return (props.timePerCatch ?? Infinity)
+    return props.timePerCatch ?? Infinity
   }
   return (props.timePerCatch ?? Infinity) / store().chestChance
 })

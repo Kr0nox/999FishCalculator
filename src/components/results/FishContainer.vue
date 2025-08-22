@@ -3,8 +3,11 @@
     <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
       <h1 class="text-xl font-bold">Fish</h1>
       <div class="flex flex-col text-sm">
-<span>Average Time to Bite: {{ store().timeToBite.toFixed(2) }} seconds</span>
-      <span>Average Time per Cast: {{ store().strategy.calculateTimePerCast().toFixed(2) }} seconds</span>
+        <span>Average Time to Bite: {{ store().timeToBite.toFixed(2) }} seconds</span>
+        <span
+          >Average Time per Cast:
+          {{ store().strategy.calculateTimePerCast().toFixed(2) }} seconds</span
+        >
       </div>
 
       <FishDisplay v-for="f in fish" :key="f.Id" :fish="f" :time-per-catch="getTimePerCatch(f)" />
