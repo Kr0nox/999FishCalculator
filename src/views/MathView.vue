@@ -1,6 +1,6 @@
 <template>
   <ContainerComponent class="w-full bg-slate-100 p-2!">
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 md:min-h-full md:overflow-auto">
       <div class="flex items-center gap-2">
         <RouterLink :to="{ name: 'Main' }"
           ><ContainerComponent class="px-1! py-0!">

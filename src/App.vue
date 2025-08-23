@@ -4,7 +4,11 @@
   >
     <router-view class="min-h-full w-full" />
     <div class="row-start-3 text-xs text-white md:row-start-2">
-      Writen by <a href="https://www.github.com/Kr0nox">Kronox</a> This tool is heavily inspired by
+      Writen by
+      <a href="https://www.github.com/Kr0nox"><FontAwesomeIcon :icon="faGithub" /> Kronox</a>,
+      <a href="https://github.com/Kr0nox/999FishCalculator"
+        ><FontAwesomeIcon :icon="faGithub" /> Source Code</a
+      >. This tool is heavily inspired by
       <a href="https://brokencygnus.github.io/stardew-fishing-calc/home"
         >brokencygnus Fishing Calculator</a
       >. Many of the graphics used are owned by
@@ -15,7 +19,10 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+</script>
 
 <style scoped>
 @reference "./style.css";

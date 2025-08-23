@@ -1,7 +1,7 @@
 <template>
   <ContainerComponent class="bg-slate-100 p-2!">
     <div
-      class="grid grid-cols-1 gap-3 md:max-h-full md:grid-cols-[1fr_1fr_2fr] md:grid-rows-[auto_1fr] md:overflow-scroll"
+      class="grid grid-cols-1 gap-3 md:max-h-full md:grid-cols-[1fr_1fr_2fr] md:grid-rows-[auto_1fr] md:overflow-auto"
     >
       <div class="col-start-1 row-start-1 flex flex-col gap-3">
         <SeasonSelector />
