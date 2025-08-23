@@ -30,7 +30,7 @@ const props = defineProps({
 const baitFishNames = computed(() => BaitableFish.map((f) => f.displayname))
 
 const baitFish = computed(() =>
-  props.fish.filter((f) => baitFishNames.value.includes(f.displayname))
+  props.fish.filter((f) => baitFishNames.value.some((n) => f.displayname.startsWith(n)))
 )
 
 function getTimePerCatch(fish: CalculatorResults): number | undefined {

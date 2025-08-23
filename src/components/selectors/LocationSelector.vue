@@ -45,6 +45,7 @@ import { store } from '@/store'
 import { LocationImages } from '@/model/images'
 
 function selectLocation(location: LocationOption) {
+  if (location.name == store().location.location) return
   store().location.location = location.name
   store().location.subLocation = location.subLocations[0] || undefined
 }

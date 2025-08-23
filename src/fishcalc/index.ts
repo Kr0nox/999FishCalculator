@@ -424,14 +424,13 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
       }
     }
 
-    if (tempTrashRate > 0.004) {
+    if (tempTrashRate >= 0.005) {
       tempFishParamArray.push({
         Id: 'trash',
         displayname: 'Trash',
         finalChance: tempTrashRate
       })
     }
-    tempFishParamArray.sort((a, b) => b.finalChance - a.finalChance)
     return tempFishParamArray
   } else {
     return []
@@ -537,6 +536,7 @@ export function getChances(configuration: Configuration) {
       finalChance: averageChance
     })
   }
-  finalChances.sort((a, b) => b.finalChance - a.finalChance)
   return finalChances
+    .filter((f) => f.finalChance >= 0.005)
+    .sort((a, b) => b.finalChance - a.finalChance)
 }

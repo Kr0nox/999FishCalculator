@@ -116,7 +116,11 @@ const FishImages: Record<string, string> = {
   'Sea Jelly': 'https://stardewvalleywiki.com/mediawiki/images/d/d5/Sea_Jelly.png',
   'River Jelly': 'https://stardewvalleywiki.com/mediawiki/images/8/80/River_Jelly.png',
   'Cave Jelly': 'https://stardewvalleywiki.com/mediawiki/images/0/0a/Cave_Jelly.png',
-  Trash: 'https://stardewvalleywiki.com/mediawiki/images/7/7c/Trash_%28item%29.png'
+  Trash: 'https://stardewvalleywiki.com/mediawiki/images/7/7c/Trash_%28item%29.png',
+  Pearl: 'https://stardewvalleywiki.com/mediawiki/images/7/73/Pearl.png',
+  'Wall Basket': 'https://stardewvalleywiki.com/mediawiki/images/c/c3/Wall_Basket.png',
+  'Fossilized Spine': 'https://stardewvalleywiki.com/mediawiki/images/5/5c/Fossilized_Spine.png',
+  'Gourmand Statue': 'https://stardewvalleywiki.com/mediawiki/images/d/d6/Gourmand_Statue.png'
 }
 
 export function getFishImage(name: string): string | undefined {
