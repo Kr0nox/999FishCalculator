@@ -17,6 +17,9 @@
 
       <input id="squidFest" v-model="store().squidFest" type="checkbox" name="squidFest" />
       <label for="squidFest">Squid Fest</label>
+
+      <input id="pirate" v-model="store().pirateProfession" type="checkbox" name="pirate" />
+      <label for="pirate">Pirate Profession</label>
     </div>
   </ContainerComponent>
 </template>

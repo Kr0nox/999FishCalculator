@@ -1,7 +1,15 @@
 import type { Bait, Tackle } from '@/model'
 
-export function getChestChance(tackles: Tackle[], bait: Bait, luckBuffs: number) {
-  let chance = 15 + 15 // base + pirate
+export function getChestChance(
+  tackles: Tackle[],
+  bait: Bait,
+  luckBuffs: number,
+  pirateProfession: boolean
+) {
+  let chance = 15
+  if (pirateProfession) {
+    chance += 15
+  }
   chance += 1.25 // special charm
   chance += tackles.filter((t) => t == 'Treasure Hunter').length * 5
   chance += luckBuffs * 0.5

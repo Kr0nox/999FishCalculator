@@ -24,6 +24,7 @@ export const store = defineStore('store', () => {
   const squidFest = ref(false)
   const troutDerby = ref(false)
   const extendedFamily = ref(false)
+  const pirateProfession = ref(true)
 
   const checkedItems = computed<CheckedItems>(() => ({
     isCuriosityLureActive: tackles.value.includes('Curiosity Lure'),
@@ -55,7 +56,9 @@ export const store = defineStore('store', () => {
   const castingOverhead = ref(5)
   const catchTime = ref(8)
 
-  const chestChance = computed(() => getChestChance(tackles.value, bait.value, luck.value))
+  const chestChance = computed(() =>
+    getChestChance(tackles.value, bait.value, luck.value, pirateProfession.value)
+  )
 
   const cancelChests = ref(false)
   const chestCancelTime = ref(5)
@@ -103,6 +106,7 @@ export const store = defineStore('store', () => {
     tackles,
     fishingLevel,
     luck,
+    pirateProfession,
     depth,
     raining,
     squidFest,

@@ -5,7 +5,8 @@
       :key="index"
       :class="{
         'text-slate-700': part.type == 'Operator',
-        'text-blue-900': part.type == 'Number'
+        'text-monokai-orange': part.type == 'Number',
+        'text-monokai-green': part.type == 'Function'
       }"
       ><VariableRenderer v-if="part.type == 'Variable'" :variable="part.value" /><span v-else>{{
         part.value
@@ -25,22 +26,25 @@ const props = defineProps({
   }
 })
 
-type Types = 'Variable' | 'Number' | 'Operator'
+type Types = 'Variable' | 'Number' | 'Operator' | 'Function'
 interface Symbol {
   type: Types
   value: string
 }
 
-const operators = '+-*/()= '.split('')
+const operators = '-+*/()=, '.split('')
+const functions = ['min']
 
 const parts = computed<Symbol[]>(() => {
-  const split = props.term.split(/([-+*/()= ])/g)
+  const split = props.term.split(RegExp(`([${operators.join('')}])`, 'g'))
   return split.map((p) => {
     let type: Types = 'Variable'
     if (operators.includes(p)) {
       type = 'Operator'
     } else if (/[0-9]+(.[0-9]+)?/.test(p)) {
       type = 'Number'
+    } else if (functions.includes(p)) {
+      type = 'Function'
     }
 
     return { type, value: p }
