@@ -87,8 +87,9 @@ export function getCalculatorLocation(l: Location): CalcLocation {
     if (l.subLocation === 'River') {
       subLocation = 'River'
     } else if (l.subLocation === 'Pond') {
-      bobberArea = 'Lake'
+      subLocation = 'Lake'
     } else if (l.subLocation === 'Waterfall') {
+      subLocation = 'River'
       bobberArea = 'Waterfall'
     }
   }
