@@ -101,6 +101,9 @@
           </p>
 
           <h2>Chests</h2>
+          <p>To be written...</p>
+          <h2>Strategies</h2>
+          <p>To be written...</p>
         </div>
       </main>
     </div>
