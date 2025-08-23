@@ -26,6 +26,7 @@ interface TimeLessConfiguration {
   selectedSeason: string
   selectedLocation: string
   selectedSubArea: string
+  selectedMineArea: string
   selectedBobberLocation: string
   fishingLevel: number
   waterDepth: number
@@ -256,6 +257,7 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
   const selectedSeason = c.selectedSeason
   const targetedBaitName = c.targetedBaitName
   const selectedLocation = c.selectedLocation
+  const selectedMineArea = c.selectedMineArea
   const waterDepth = c.waterDepth
   const fishingLevel = c.fishingLevel
   const dailyLuck = c.dailyLuck
@@ -357,77 +359,69 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
 
     // handle UndergroundMine
     if (selectedLocation == 'UndergroundMine') {
-      /*let caveJellyChance = 0;
-        let floorFishChance = 0;
-        if (!checkedItems.isUsingTrainingRod) {
-          let chanceMultiplier = 1;
-          chanceMultiplier += 0.4 * fishingLevel;
-          chanceMultiplier += 0.1 * waterDepth;
-          chanceMultiplier += checkedItems.isCuriosityLureActive ? 5 : 0;
-          let mineFish = {
-            Id: null,
-            displayname: null,
-            finalChance: 0,
-          };
-          switch (selectedMineArea) {
-            case "20":
-              chanceMultiplier +=
-                checkedItems.isUsingTargetedBait &&
-                targetedBaitName == "Stonefish"
-                  ? 10
-                  : 0;
-              console.log(fishingLevel, chanceMultiplier);
-              floorFishChance = 0.02 + 0.01 * chanceMultiplier;
-              mineFish["Id"] = "(O)158";
-              mineFish["displayname"] = "Stonefish";
-              mineFish["finalChance"] = floorFishChance;
-              break;
-            case "60":
-              chanceMultiplier +=
-                checkedItems.isUsingTargetedBait &&
-                targetedBaitName == "Ice Pip"
-                  ? 10
-                  : 0;
-              floorFishChance = 0.015 + 0.009 * chanceMultiplier;
-              mineFish["Id"] = "(O)161";
-              mineFish["displayname"] = "Ice Pip";
-              mineFish["finalChance"] = floorFishChance;
-              break;
-            case "100":
-              chanceMultiplier +=
-                checkedItems.isUsingTargetedBait &&
-                targetedBaitName == "Lava Eel"
-                  ? 10
-                  : 0;
-              floorFishChance = 0.01 + 0.008 * chanceMultiplier;
-              mineFish["Id"] = "(O)162";
-              mineFish["displayname"] = "Lava Eel";
-              mineFish["finalChance"] = floorFishChance;
-              caveJellyChance = 0.05 + 0.05 * luckBuffs;
-              break;
+      let caveJellyChance = 0
+      let floorFishChance = 0
+      if (!checkedItems.isUsingTrainingRod) {
+        let chanceMultiplier = 1
+        chanceMultiplier += 0.4 * fishingLevel
+        chanceMultiplier += 0.1 * waterDepth
+        chanceMultiplier += checkedItems.isCuriosityLureActive ? 5 : 0
+        let mineFish: { Id: string | null; displayname: string | null; finalChance: number } = {
+          Id: null,
+          displayname: null,
+          finalChance: 0
+        }
+        switch (selectedMineArea) {
+          case '20':
+            chanceMultiplier +=
+              checkedItems.isUsingTargetedBait && targetedBaitName == 'Stonefish' ? 10 : 0
+            floorFishChance = 0.02 + 0.01 * chanceMultiplier
+            mineFish['Id'] = '(O)158'
+            mineFish['displayname'] = 'Stonefish'
+            mineFish['finalChance'] = floorFishChance
+            break
+          case '60':
+            chanceMultiplier +=
+              checkedItems.isUsingTargetedBait && targetedBaitName == 'Ice Pip' ? 10 : 0
+            floorFishChance = 0.015 + 0.009 * chanceMultiplier
+            mineFish['Id'] = '(O)161'
+            mineFish['displayname'] = 'Ice Pip'
+            mineFish['finalChance'] = floorFishChance
+            break
+          case '100':
+            chanceMultiplier +=
+              checkedItems.isUsingTargetedBait && targetedBaitName == 'Lava Eel' ? 10 : 0
+            floorFishChance = 0.01 + 0.008 * chanceMultiplier
+            mineFish['Id'] = '(O)162'
+            mineFish['displayname'] = 'Lava Eel'
+            mineFish['finalChance'] = floorFishChance
+            caveJellyChance = 0.05 + 0.05 * luckBuffs
+            break
+          default:
+            throw 'unknown mine area: ' + selectedMineArea
+        }
+        if (selectedMineArea == '100') {
+          let mineFishArray = []
+          mineFishArray.push(mineFish)
+          let caveJelly = {
+            Id: '(O)CaveJelly',
+            displayname: 'Cave Jelly',
+            finalChance: caveJellyChance * (1 - floorFishChance)
           }
-          if (selectedMineArea == "100") {
-            let mineFishArray = [];
-            mineFishArray.push(mineFish);
-            let caveJelly = {
-              Id: "(O)CaveJelly",
-              displayname: "Cave Jelly",
-              finalChance: caveJellyChance * (1 - floorFishChance),
-            };
-            mineFishArray.push(caveJelly);
-            tempFishParamArray = mineFishArray;
-            setTrashRate(1 - floorFishChance - caveJellyChance);
-          } else {
-            for (let i in tempFishParamArray) {
-              tempFishParamArray[i]["finalChance"] *= 1 - floorFishChance;
-            }
-            tempFishParamArray.push(mineFish);
-            setTrashRate(tempTrashRate * (1 - floorFishChance));
-          }
+          mineFishArray.push(caveJelly)
+          tempFishParamArray = mineFishArray as CalculatorResults[]
+          tempTrashRate = 1 - floorFishChance - caveJellyChance
         } else {
-          tempFishParamArray = [];
-          setTrashRate(1);
-        }*/
+          for (let i in tempFishParamArray) {
+            tempFishParamArray[i]['finalChance'] *= 1 - floorFishChance
+          }
+          tempFishParamArray.push(mineFish as CalculatorResults)
+          tempTrashRate = tempTrashRate * (1 - floorFishChance)
+        }
+      } else {
+        tempFishParamArray = []
+        tempTrashRate = 1
+      }
     }
 
     if (tempTrashRate > 0.004) {
@@ -500,6 +494,7 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
 
 export function getChances(configuration: Configuration) {
   const chances: Record<string, CalculatorResults[]> = {}
+
   const appendedFishData = getAppendedFishData(
     getFishFromLocationAndSeason(configuration.selectedLocation, configuration.selectedSeason)
   )

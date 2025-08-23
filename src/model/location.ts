@@ -73,7 +73,7 @@ export function getCalculatorLocation(l: Location): CalcLocation {
     location = 'Mountain'
   }
   if (l.location === 'Mines') {
-    l.location = 'UndergroundMine'
+    location = 'UndergroundMine'
     if (l.subLocation === 'Floor 20') {
       mineArea = '20'
     } else if (l.subLocation === 'Floor 60') {
@@ -100,6 +100,7 @@ export function getCalculatorLocation(l: Location): CalcLocation {
   }
   if (l.location === 'Desert') {
     location = 'Desert'
+    subLocation = 'TopPond'
   }
   if (l.location === 'Witch Swamp') {
     location = 'WitchSwamp'
