@@ -86,7 +86,15 @@
             We use the same algorithms as
             <a class="link" href="https://brokencygnus.github.io/stardew-fishing-calc/home"
               >brokencygnus calculator</a
-            >.
+            >
+            to get a chance at a given time. We call this <MathRenderer term="P(fish,time)" />
+            <br />
+            In single time mode this number is the chance displayed. <br />
+            Time can be a number between 600 (6 AM) and 2600 (2 AM). Every 100 a new hour begins. As
+            fish chances change on the full hour, we only need to get chances at the full hour, not
+            every minute in the range. <br />
+            We then sum up the chances at every full hour in the range and divide this by the amount
+            of hours in the range, to get <MathRenderer term="P(fish,start,end)" />.
           </p>
           <h3>Quality</h3>
           <p>
@@ -101,9 +109,9 @@
           </p>
 
           <h2>Chests</h2>
-          <p>To be written...</p>
+          <p>To be written, for now see <a href="sqroe.kronox.dev">here</a></p>
           <h2>Strategies</h2>
-          <p>To be written...</p>
+          <p>To be written, for now see <a href="sqroe.kronox.dev">here</a></p>
         </div>
       </main>
     </div>

@@ -13,7 +13,7 @@ export const store = defineStore('store', () => {
   const location = ref<Location>({ location: 'Beach', subLocation: 'Default' })
   const season = ref<Season>('Spring')
   const startTime = ref<Time>({ hour: 6, minute: 0 })
-  const endTime = ref<Time>({ hour: 26, minute: 0 })
+  const endTime = ref<Time>({ hour: 25, minute: 50 })
   const bait = ref<Bait>({ name: 'Deluxe' })
   const tackles = ref<Tackle[]>(['Dressed Spinner', 'Dressed Spinner'])
 
