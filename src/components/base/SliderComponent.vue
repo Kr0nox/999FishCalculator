@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-[auto_1fr_auto]">
     <label class="col-start-1 row-start-1 text-sm font-bold">{{ label }}</label>
-    <span class="col-start-3 row-start-1 text-sm">{{ model }}</span>
+    <span class="col-start-3 row-start-1 text-sm">{{ displayFunction(model) }}</span>
     <input
       v-model="inputModel"
       type="range"
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, type PropType } from 'vue'
 
 defineProps({
   min: {
@@ -32,6 +32,10 @@ defineProps({
   label: {
     type: String,
     default: ''
+  },
+  displayFunction: {
+    type: Function as PropType<(i: number) => number>,
+    default: (i: number) => i
   }
 })
 
