@@ -1,13 +1,13 @@
 <template>
   <ContainerComponent class="w-full bg-slate-100 p-2!">
     <div class="flex flex-col gap-2">
-      <div class="flex gap-2">
+      <div class="flex items-center gap-2">
         <RouterLink :to="{ name: 'Main' }"
           ><ContainerComponent class="px-1! py-0!">
             <FontAwesomeIcon :icon="faArrowLeft" /> Back
           </ContainerComponent></RouterLink
         >
-        <h1>Math Explained</h1>
+        <h1 class="text-2xl font-bold">Math Explained</h1>
       </div>
       <main class="">
         <div class="dynamic rounded bg-slate-200 p-2">
