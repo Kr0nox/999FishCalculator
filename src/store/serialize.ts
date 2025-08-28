@@ -1,5 +1,5 @@
 import type { Bait, Fish, Season, Tackle, Time, Location } from '@/model'
-import { store } from '.'
+import { mainStore } from '.'
 
 export interface Data {
   location: Location
@@ -36,58 +36,58 @@ interface FishStrategy {
 
 function fromStore(): Data {
   return {
-    location: store().location,
-    season: store().season,
-    startTime: store().startTime,
-    endTime: store().endTime,
-    bait: store().bait,
-    tackles: store().tackles,
+    location: mainStore().location,
+    season: mainStore().season,
+    startTime: mainStore().startTime,
+    endTime: mainStore().endTime,
+    bait: mainStore().bait,
+    tackles: mainStore().tackles,
 
-    fishingLevel: store().fishingLevel,
-    luck: store().luck,
-    depth: store().depth,
-    raining: store().raining,
-    squidFest: store().squidFest,
-    troutDerby: store().troutDerby,
-    extendedFamily: store().extendedFamily,
+    fishingLevel: mainStore().fishingLevel,
+    luck: mainStore().luck,
+    depth: mainStore().depth,
+    raining: mainStore().raining,
+    squidFest: mainStore().squidFest,
+    troutDerby: mainStore().troutDerby,
+    extendedFamily: mainStore().extendedFamily,
 
-    catchTime: store().catchTime,
-    castingOverhead: store().castingOverhead,
+    catchTime: mainStore().catchTime,
+    castingOverhead: mainStore().castingOverhead,
     chestStrategy: {
-      cancelNoChest: store().cancelChests,
-      cancelTime: store().chestCancelTime
+      cancelNoChest: mainStore().cancelChests,
+      cancelTime: mainStore().chestCancelTime
     },
     fishStrategy: {
-      cancelOtherFish: store().cancelOtherFish,
-      cancelTime: store().cancelOtherFishTime,
-      prioritisedFish: store().prioritisedFish
+      cancelOtherFish: mainStore().cancelOtherFish,
+      cancelTime: mainStore().cancelOtherFishTime,
+      prioritisedFish: mainStore().prioritisedFish
     }
   }
 }
 
 function toStore(data: Data): void {
-  store().location = data.location
-  store().season = data.season
-  store().startTime = data.startTime
-  store().endTime = data.endTime
-  store().bait = data.bait
-  store().tackles = data.tackles
+  mainStore().location = data.location
+  mainStore().season = data.season
+  mainStore().startTime = data.startTime
+  mainStore().endTime = data.endTime
+  mainStore().bait = data.bait
+  mainStore().tackles = data.tackles
 
-  store().fishingLevel = data.fishingLevel
-  store().luck = data.luck
-  store().depth = data.depth
-  store().raining = data.raining
-  store().squidFest = data.squidFest
-  store().troutDerby = data.troutDerby
-  store().extendedFamily = data.extendedFamily
+  mainStore().fishingLevel = data.fishingLevel
+  mainStore().luck = data.luck
+  mainStore().depth = data.depth
+  mainStore().raining = data.raining
+  mainStore().squidFest = data.squidFest
+  mainStore().troutDerby = data.troutDerby
+  mainStore().extendedFamily = data.extendedFamily
 
-  store().catchTime = data.catchTime
-  store().castingOverhead = data.castingOverhead
-  store().chestCancelTime = data.chestStrategy.cancelTime
-  store().cancelChests = data.chestStrategy.cancelNoChest
-  store().cancelOtherFish = data.fishStrategy.cancelOtherFish
-  store().cancelOtherFishTime = data.fishStrategy.cancelTime
-  store().prioritisedFish = data.fishStrategy.prioritisedFish
+  mainStore().catchTime = data.catchTime
+  mainStore().castingOverhead = data.castingOverhead
+  mainStore().chestCancelTime = data.chestStrategy.cancelTime
+  mainStore().cancelChests = data.chestStrategy.cancelNoChest
+  mainStore().cancelOtherFish = data.fishStrategy.cancelOtherFish
+  mainStore().cancelOtherFishTime = data.fishStrategy.cancelTime
+  mainStore().prioritisedFish = data.fishStrategy.prioritisedFish
 }
 
 export function save() {

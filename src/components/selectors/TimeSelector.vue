@@ -53,25 +53,25 @@
 import ContainerComponent from '../ContainerComponent.vue'
 import { numberToTime, timeToNumber, timeToString } from '@/model/time'
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 
-const disabled = computed(() => store().bait.name == 'Magic')
+const disabled = computed(() => mainStore().bait.name == 'Magic')
 const useRange = ref(true)
 
-const startTime = ref(timeToNumber(store().startTime))
-const endTime = ref(timeToNumber(store().endTime))
+const startTime = ref(timeToNumber(mainStore().startTime))
+const endTime = ref(timeToNumber(mainStore().endTime))
 function handleStartInput() {
   if (startTime.value > endTime.value) {
     //startTime.value = endTime.value
   }
-  store().startTime = numberToTime(startTime.value)
+  mainStore().startTime = numberToTime(startTime.value)
   fill()
 }
 function handleEndInput() {
   if (endTime.value < startTime.value) {
     //endTime.value = startTime.value
   }
-  store().endTime = numberToTime(endTime.value)
+  mainStore().endTime = numberToTime(endTime.value)
   fill()
 }
 
@@ -85,8 +85,8 @@ function fill() {
 }
 
 function handleSingleInput() {
-  store().startTime = numberToTime(startTime.value)
-  store().endTime = numberToTime(startTime.value)
+  mainStore().startTime = numberToTime(startTime.value)
+  mainStore().endTime = numberToTime(startTime.value)
   endTime.value = startTime.value
 }
 

@@ -8,8 +8,13 @@
         label="Water depth:"
         :display-function="sliderToLvl"
       />
-      <SliderComponent v-model="store().fishingLevel" :min="0" :max="19" label="Fishing Level:" />
-      <SliderComponent v-model="store().luck" :min="0" :max="13" label="Luck Buffs:" />
+      <SliderComponent
+        v-model="mainStore().fishingLevel"
+        :min="0"
+        :max="19"
+        label="Fishing Level:"
+      />
+      <SliderComponent v-model="mainStore().luck" :min="0" :max="13" label="Luck Buffs:" />
     </div>
   </ContainerComponent>
 </template>
@@ -18,11 +23,11 @@
 import { computed } from 'vue'
 import SliderComponent from '../base/SliderComponent.vue'
 import ContainerComponent from '../ContainerComponent.vue'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 
 const depth = computed({
-  get: () => lvlToSlider(store().depth),
-  set: (i: number) => (store().depth = sliderToLvl(i))
+  get: () => lvlToSlider(mainStore().depth),
+  set: (i: number) => (mainStore().depth = sliderToLvl(i))
 })
 
 function sliderToLvl(i: number) {

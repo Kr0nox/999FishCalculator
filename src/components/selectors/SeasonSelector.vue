@@ -4,9 +4,11 @@
       <ContainerComponent
         v-for="season in seasons"
         :key="season"
-        :class="store().season == season ? 'border-emerald-600! bg-emerald-400' : 'bg-slate-100'"
+        :class="
+          mainStore().season == season ? 'border-emerald-600! bg-emerald-400' : 'bg-slate-100'
+        "
         class="cursor-pointer"
-        @click="store().season = season"
+        @click="mainStore().season = season"
       >
         <div class="flex items-center gap-2">
           <img :src="SeasonImages[season]" class="h-4" />
@@ -21,7 +23,7 @@
 import ContainerComponent from '../ContainerComponent.vue'
 import type { Season } from '@/model'
 import { SeasonImages } from '@/model/images'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 
 const seasons: Season[] = ['Spring', 'Summer', 'Fall', 'Winter']
 </script>

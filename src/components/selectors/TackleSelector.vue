@@ -5,7 +5,7 @@
         <input
           v-for="tackle in tackles"
           :key="tackle"
-          v-model="store().tackles[0]"
+          v-model="mainStore().tackles[0]"
           :value="tackle"
           :name="tackle + '1'"
           type="radio"
@@ -15,7 +15,7 @@
         <input
           v-for="tackle in tackles"
           :key="tackle"
-          v-model="store().tackles[1]"
+          v-model="mainStore().tackles[1]"
           :value="tackle"
           :name="tackle + '2'"
           type="radio"
@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import type { Tackle } from '@/model'
 import ContainerComponent from '../ContainerComponent.vue'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 import { TackleImages } from '@/model/images'
 
 const tackles: Tackle[] = [

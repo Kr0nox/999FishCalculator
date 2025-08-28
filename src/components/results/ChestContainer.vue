@@ -1,7 +1,7 @@
 <template>
   <ExpandableContainer title="Chests" class="bg-slate-100">
     <div class="flex flex-col gap-2 md:max-h-full md:flex-1 md:overflow-auto">
-      <div>Chest chance: {{ (store().chestChance * 100).toFixed(2) }}%</div>
+      <div>Chest chance: {{ (mainStore().chestChance * 100).toFixed(2) }}%</div>
       <RoeDisplay
         v-for="f in baitFish"
         :key="f.Id"
@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import type { CalculatorResults } from '@/fishcalc'
 import ExpandableContainer from '../ExpandableContainer.vue'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 import RoeDisplay from './RoeDisplay.vue'
 import { BaitableFish } from '@/model/Fish'
 import { computed } from 'vue'
@@ -34,6 +34,6 @@ const baitFish = computed(() =>
 )
 
 function getTimePerCatch(fish: CalculatorResults): number | undefined {
-  return store().strategy.calculateTimePerCatch(fish)
+  return mainStore().strategy.calculateTimePerCatch(fish)
 }
 </script>

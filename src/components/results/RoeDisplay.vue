@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import type { CalculatorResults } from '@/fishcalc'
 import { getFishImage } from '@/model/images'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 import { computed, type PropType } from 'vue'
 
 const props = defineProps({
@@ -34,10 +34,10 @@ const props = defineProps({
 })
 
 const timePerChest = computed(() => {
-  if (store().cancelChests) {
+  if (mainStore().cancelChests) {
     return props.timePerCatch ?? Infinity
   }
-  return (props.timePerCatch ?? Infinity) / store().chestChance
+  return (props.timePerCatch ?? Infinity) / mainStore().chestChance
 })
 
 const timePerRoeChest = computed(() => {

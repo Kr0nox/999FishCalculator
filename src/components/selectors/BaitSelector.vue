@@ -4,9 +4,9 @@
       <ContainerComponent
         v-for="bait in simpleBaitTypes"
         :key="bait.name"
-        :class="store().bait.name == bait.name ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
+        :class="mainStore().bait.name == bait.name ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
         class="cursor-pointer"
-        @click="store().bait = bait"
+        @click="mainStore().bait = bait"
       >
         <div class="flex items-center gap-2">
           <img :src="BaitImages[bait.name]" class="h-4" />
@@ -14,17 +14,17 @@
         </div>
       </ContainerComponent>
       <ContainerComponent
-        :class="store().bait.name == 'Targeted' ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
+        :class="mainStore().bait.name == 'Targeted' ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
         class="cursor-pointer"
-        @click="store().bait = { name: 'Targeted', fish: '' }"
+        @click="mainStore().bait = { name: 'Targeted', fish: '' }"
       >
         <div class="flex items-center gap-2">
           <img :src="targetedBaitImage" class="h-4" />
           <span>Targeted</span>
           <input
-            v-show="store().bait.name == 'Targeted'"
+            v-show="mainStore().bait.name == 'Targeted'"
             ref="targetedTypeInput"
-            v-model="(store().bait as TargetedBait).fish"
+            v-model="(mainStore().bait as TargetedBait).fish"
             class="w-32 rounded border border-gray-300 bg-white px-1 text-sm"
             placeholder="Fish"
             @click="cancelEvent"
@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import type { Bait, TargetedBait } from '@/model'
 import ContainerComponent from '../ContainerComponent.vue'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 import { BaitImages, getFishImage } from '@/model/images'
 import { computed, onMounted, useTemplateRef } from 'vue'
 import autocomplete from 'autocompleter'
@@ -53,10 +53,10 @@ const simpleBaitTypes: Bait[] = [
 ]
 
 const targetedBaitImage = computed(() => {
-  if (store().bait.name !== 'Targeted') {
+  if (mainStore().bait.name !== 'Targeted') {
     return BaitImages['Targeted']
   }
-  return getFishImage((store().bait as TargetedBait).fish) ?? BaitImages['Targeted']
+  return getFishImage((mainStore().bait as TargetedBait).fish) ?? BaitImages['Targeted']
 })
 
 const targetedTypeInput = useTemplateRef('targetedTypeInput')
@@ -80,8 +80,8 @@ onMounted(() => {
       update(filtered)
     },
     onSelect: (item) => {
-      if (store().bait.name === 'Targeted') {
-        ;(store().bait as TargetedBait).fish = item.label ?? ''
+      if (mainStore().bait.name === 'Targeted') {
+        ;(mainStore().bait as TargetedBait).fish = item.label ?? ''
       }
     },
     minLength: -1,

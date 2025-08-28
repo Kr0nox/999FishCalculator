@@ -18,7 +18,7 @@
       <div class="flex flex-col gap-3 md:col-span-2 md:col-start-1 md:row-start-2"></div>
 
       <div class="flex flex-col gap-3 md:col-start-3 md:row-span-2 md:row-start-1">
-        <LocationSelector v-model="store().location" />
+        <LocationSelector v-model="mainStore().location" />
         <TimeSelector />
       </div>
     </div>
@@ -36,5 +36,5 @@ import TackleSelector from './TackleSelector.vue'
 import TimeSelector from './TimeSelector.vue'
 import TacticSelector from './TacticSelector.vue'
 import SaveManager from '../SaveManager.vue'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 </script>

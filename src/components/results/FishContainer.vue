@@ -3,10 +3,10 @@
     <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
       <h1 class="text-xl font-bold">Fish</h1>
       <div class="flex flex-col text-sm">
-        <span>Average Time to Bite: {{ store().timeToBite.toFixed(2) }} seconds</span>
+        <span>Average Time to Bite: {{ mainStore().timeToBite.toFixed(2) }} seconds</span>
         <span
           >Average Time per Cast:
-          {{ store().strategy.calculateTimePerCast().toFixed(2) }} seconds</span
+          {{ mainStore().strategy.calculateTimePerCast().toFixed(2) }} seconds</span
         >
         <span class="flex items-center gap-1"
           ><img src="@/assets/IridiumQuality.png" class="h-3" />Iridium Quality:
@@ -24,7 +24,7 @@
 import type { CalculatorResults } from '@/fishcalc'
 import ContainerComponent from '../ContainerComponent.vue'
 import FishDisplay from './FishDisplay.vue'
-import { store } from '@/store'
+import { mainStore } from '@/store'
 import { computed } from 'vue'
 import { Quality } from '@/model'
 import { getChanceForQuality } from '@/math/Quality'
@@ -37,21 +37,26 @@ defineProps({
 })
 
 function getTimePerCatch(fish: CalculatorResults): number | undefined {
-  const time = store().strategy.calculateTimePerCatch(fish)
+  const time = mainStore().strategy.calculateTimePerCatch(fish)
   if (time === undefined) {
     return undefined
   }
 
-  if (store().bait.name == 'Challenge') {
+  if (mainStore().bait.name == 'Challenge') {
     return time / 3
   }
-  if (store().bait.name == 'Wild') {
+  if (mainStore().bait.name == 'Wild') {
     return time / 1.25
   }
   return time
 }
 
 const iridiumChance = computed(() =>
-  getChanceForQuality(Quality.IRIDIUM, store().depth, store().fishingLevel, store().tackles)
+  getChanceForQuality(
+    Quality.IRIDIUM,
+    mainStore().depth,
+    mainStore().fishingLevel,
+    mainStore().tackles
+  )
 )
 </script>
