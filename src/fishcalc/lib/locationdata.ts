@@ -2,7 +2,10 @@
 // @ts-nocheck
 import locationData from '../data/Locations.json'
 
-export function getFishFromLocationAndSeason(location: string, season: string) {
+export function getFishFromLocationAndSeason(
+  location: string,
+  season: string
+): { Id: string; [key: string]: unknown }[] {
   const noBoss = locationData[location].Fish.filter((fish) => !fish.IsBossFish)
 
   let filterSeason = []

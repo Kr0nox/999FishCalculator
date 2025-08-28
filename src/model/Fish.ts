@@ -6,6 +6,11 @@ export const FishList: Fish[] = getFishIds().map((id) => ({
   displayname: getFishParameters(id)?.name ?? 'Unknown Fish'
 }))
 
+export function getNameById(id: string): string {
+  const fish = FishList.find((f) => checkIdEquality(f.Id, id))
+  return fish ? fish.displayname : 'Unknown Fish ' + id
+}
+
 export const BaitableFish: Fish[] = FishList.filter(
   (fish) =>
     ![

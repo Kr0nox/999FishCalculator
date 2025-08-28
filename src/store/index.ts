@@ -1,3 +1,4 @@
 import { mainStore } from './main'
+import { stackCalcStore } from './stackCalc'
 
-export { mainStore }
+export { mainStore, stackCalcStore }

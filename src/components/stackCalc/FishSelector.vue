@@ -2,8 +2,12 @@
   <ContainerComponent class="bg-slate-100 p-2!">
     <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
       <h1>Fish:</h1>
-      <div v-for="(fish, index) in fishOptions" :key="fish.Id">
-        <img :src="getFishImage(fish.displayname)" />
+      <div
+        v-for="(fish, index) in stackCalcStore().fishForLocation"
+        :key="fish.Id"
+        class="grid grid-cols-[auto_1fr_auto] items-center gap-2"
+      >
+        <img :src="getFishImage(fish.displayname)" class="h-8" />
         <span>{{ fish.displayname }}</span>
         <NumberInput
           :model-value="counts[index] ?? 0"
@@ -19,13 +23,8 @@ import type { Fish } from '@/model'
 import { getFishImage } from '@/model/images'
 import { ref, type Ref } from 'vue'
 import NumberInput from '../base/NumberInput.vue'
-
-const props = defineProps({
-  fishOptions: {
-    type: Array<Fish>,
-    required: true
-  }
-})
+import { stackCalcStore } from '@/store'
+import ContainerComponent from '../ContainerComponent.vue'
 
 const emit = defineEmits(['amountChanged'])
 
@@ -41,7 +40,7 @@ function setCount(index: number, value: number) {
 }
 
 function getArray(): FishCount[] {
-  return props.fishOptions.map((f, i) => ({
+  return stackCalcStore().fishForLocation.map((f, i) => ({
     ...f,
     stillToCatch: counts.value[i] ?? 0
   }))
