@@ -1,5 +1,6 @@
 import MainView from '@/views/MainView.vue'
 import MathView from '@/views/MathView.vue'
+import StackCalcView from '@/views/StackCalcView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 /**
@@ -17,6 +18,11 @@ export const router = createRouter({
       path: '/math',
       name: 'Math',
       component: MathView
+    },
+    {
+      path: '/stacks',
+      name: 'Stacks',
+      component: StackCalcView
     }
   ]
 })

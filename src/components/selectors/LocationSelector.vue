@@ -5,7 +5,7 @@
         v-for="location in LocationOptions"
         :key="location.name"
         :class="
-          store().location.location == location.name
+          model.location == location.name
             ? 'col-start-1 border-orange-600! bg-orange-400 md:col-span-2'
             : 'bg-slate-100'
         "
@@ -17,12 +17,12 @@
             <img :src="LocationImages[location.name]" class="h-4" />
             {{ location.name }}
           </span>
-          <div v-if="store().location.location == location.name" class="flex flex-col gap-y-2">
+          <div v-if="model.location == location.name" class="flex flex-col gap-y-2">
             <ContainerComponent
               v-for="subLocation in location.subLocations"
               :key="subLocation"
               :class="
-                store().location.subLocation == subLocation
+                model.subLocation == subLocation
                   ? 'border-orange-800! bg-orange-600'
                   : 'bg-slate-100'
               "
@@ -41,18 +41,24 @@
 <script setup lang="ts">
 import { LocationOptions, type LocationOption } from '@/model/location'
 import ContainerComponent from '../ContainerComponent.vue'
-import { store } from '@/store'
 import { LocationImages } from '@/model/images'
+import type { Location } from '@/model'
+
+const model = defineModel<Location>({
+  default: {
+    location: 'Beach'
+  }
+})
 
 function selectLocation(location: LocationOption) {
-  if (location.name == store().location.location) return
-  store().location.location = location.name
-  store().location.subLocation = location.subLocations[0] || undefined
+  if (location.name == model.value.location) return
+  model.value.location = location.name
+  model.value.subLocation = location.subLocations[0] || undefined
 }
 
 function setSubLocation(subLocation: string, e: Event) {
   e.preventDefault()
   e.stopPropagation()
-  store().location.subLocation = subLocation
+  model.value.subLocation = subLocation
 }
 </script>
