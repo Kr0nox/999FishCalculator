@@ -72,7 +72,7 @@ export interface FishParameters {
   type: string
   minSize: string
   maxSize: string
-  time: string[]
+  time: number[]
   season: string
   weather: string
   maxDepth: number

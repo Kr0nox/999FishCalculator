@@ -12,7 +12,7 @@ export function getFishParameters(id: CalcFishKey): FishParameters | null {
     type: fishArray[2],
     minSize: fishArray[3],
     maxSize: fishArray[4],
-    time: fishArray[5].split(' '),
+    time: fishArray[5].split(' ').map(Number),
     season: fishArray[6],
     weather: fishArray[7],
     maxDepth: Number(fishArray[9]),

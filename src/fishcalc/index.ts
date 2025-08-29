@@ -215,11 +215,11 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
       if (squidCondition && squidCondition.includes('TIME')) {
         const timeArray = squidCondition.split(' ')
         const timeIndex = timeArray.findIndex((e: string) => e == 'TIME')
-        const newTime = [timeArray[timeIndex + 1], timeArray[timeIndex + 2]]
+        const newTime = [Number(timeArray[timeIndex + 1]), Number(timeArray[timeIndex + 2])]
         squid[i].time = newTime
         break
       } else {
-        squid[i].time = ['0600', '0600']
+        squid[i].time = [600, 600]
       }
     }
     for (const i in squid) {
@@ -447,7 +447,7 @@ export function getChance(
       }
     }
 
-    if (tempTrashRate >= 0.005) {
+    if (tempTrashRate >= 0.00005) {
       tempFishParamArray.push({
         Id: 'trash',
         displayname: 'Trash',
@@ -560,6 +560,6 @@ export function getChances(configuration: Configuration) {
     })
   }
   return finalChances
-    .filter((f) => f.finalChance >= 0.005)
+    .filter((f) => f.finalChance >= 0.00005)
     .sort((a, b) => b.finalChance - a.finalChance)
 }
