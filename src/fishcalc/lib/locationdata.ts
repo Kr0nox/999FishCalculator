@@ -1,11 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import locationData from '../data/Locations.json'
+import type { CalcFish, CalcLocationKey, CalcSeason } from '../types'
 
 export function getFishFromLocationAndSeason(
-  location: string,
-  season: string
-): { Id: string; [key: string]: unknown }[] {
+  location: CalcLocationKey,
+  season: CalcSeason
+): CalcFish[] {
   const noBoss = locationData[location].Fish.filter((fish) => !fish.IsBossFish)
 
   let filterSeason = []

@@ -4,6 +4,7 @@ import {
   type CheckedItems,
   type Configuration
 } from '@/fishcalc'
+import type { CalcLocationKey, CalcSeason } from '@/fishcalc/types'
 import type { Fish } from '@/model'
 import { type CalcLocation } from '@/model/location'
 
@@ -154,7 +155,7 @@ export class TacticCalculator {
   }
 
   private buildSimpleConfigurations(magicBait: boolean): NonRangeConfiguration[] {
-    const _seasons = magicBait ? ['MagicBait'] : seasons
+    const _seasons: CalcSeason[] = magicBait ? ['MagicBait'] : seasons
     const simpleConfigs: NonRangeConfiguration[] = []
     for (const raining of bools) {
       for (const curiosityLure of bools) {
@@ -226,15 +227,15 @@ export class TacticCalculator {
   }
 }
 
-const seasons = ['spring', 'summer', 'fall', 'winter']
+const seasons: CalcSeason[] = ['spring', 'summer', 'fall', 'winter']
 const bools = [true, false]
 
 interface NonRangeConfiguration extends Partial<Configuration> {
   targetedBaitName: string
   checkedItems: CheckedItems
   dailyLuck: number
-  selectedSeason: string
-  selectedLocation: string
+  selectedSeason: CalcSeason
+  selectedLocation: CalcLocationKey
   selectedSubArea: string
   selectedMineArea: string
   selectedBobberLocation: string

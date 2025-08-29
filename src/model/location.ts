@@ -1,3 +1,4 @@
+import type { CalcLocationKey } from '@/fishcalc/types'
 import type { Location } from '.'
 
 export interface LocationOption {
@@ -49,14 +50,14 @@ export const LocationOptions: LocationOption[] = [
 ]
 
 export interface CalcLocation {
-  location: string
+  location: CalcLocationKey
   subLocation: string
   bobberArea: string
   mineArea: string
 }
 
 export function getCalculatorLocation(l: Location): CalcLocation {
-  let location = ''
+  let location: CalcLocationKey | undefined
   let subLocation = ''
   let bobberArea = ''
   let mineArea = ''
@@ -120,6 +121,9 @@ export function getCalculatorLocation(l: Location): CalcLocation {
     } else if (l.subLocation === 'Pirate Cove') {
       location = 'IslandSouthEastCave'
     }
+  }
+  if (!location) {
+    throw new Error(`Unknown location: ${l.location} ${l.subLocation}`)
   }
 
   return {
