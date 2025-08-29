@@ -48,7 +48,7 @@ export const LocationOptions: LocationOption[] = [
   }
 ]
 
-interface CalcLocation {
+export interface CalcLocation {
   location: string
   subLocation: string
   bobberArea: string

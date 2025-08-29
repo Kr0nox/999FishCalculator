@@ -1,7 +1,7 @@
 <template>
   <ContainerComponent class="bg-slate-100 p-2!">
     <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
-      <h1>Fish:</h1>
+      <h1>Fish:<span class="float-right">Catch Goal</span></h1>
       <div
         v-for="(fish, index) in stackCalcStore().fishForLocation"
         :key="fish.Id"

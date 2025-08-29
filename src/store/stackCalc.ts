@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import type { Fish, Location } from '@/model'
 import { getFishFromLocationAndSeason } from '@/fishcalc/lib/locationdata'
 import { getCalculatorLocation } from '@/model/location'
-import { getNameById } from '@/model/Fish'
+import { BaitableFish, getNameById } from '@/model/Fish'
 
 export const stackCalcStore = defineStore('stackCalc', () => {
   const location = ref<Location>({ location: 'Beach', subLocation: 'Default' })
@@ -11,11 +11,13 @@ export const stackCalcStore = defineStore('stackCalc', () => {
   const fishCalcLocation = computed(() => getCalculatorLocation(location.value))
 
   const fishForLocation = computed<Fish[]>(() =>
-    getFishFromLocationAndSeason(fishCalcLocation.value.location, 'MagicBait').map((f) => ({
-      Id: f.Id,
-      displayname: getNameById(f.Id)
-    }))
+    getFishFromLocationAndSeason(fishCalcLocation.value.location, 'MagicBait')
+      .map((f) => ({
+        Id: f.Id,
+        displayname: getNameById(f.Id)
+      }))
+      .filter((f) => BaitableFish.find((b) => b.displayname === f.displayname) !== undefined)
   )
 
-  return { location, fishForLocation }
+  return { location, fishForLocation, fishCalcLocation }
 })
