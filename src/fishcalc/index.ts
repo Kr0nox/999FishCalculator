@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable prefer-const */
 import {
   getJellyChance,
   nonFishItems,
@@ -9,6 +7,14 @@ import {
 } from './lib/calculateChance.ts'
 import { getFishParameters } from './lib/fishdata.ts'
 import { getFishFromLocationAndSeason } from './lib/locationdata.ts'
+import type {
+  AppendedFish,
+  BobberArea,
+  CalcFish,
+  CalcFishKey,
+  CalcLocationKey,
+  CalcSeason
+} from './types.ts'
 
 export interface CheckedItems {
   isCuriosityLureActive: boolean
@@ -23,8 +29,8 @@ interface TimeLessConfiguration {
   targetedBaitName: string
   checkedItems: CheckedItems
   dailyLuck: number
-  selectedSeason: string
-  selectedLocation: string
+  selectedSeason: CalcSeason
+  selectedLocation: CalcLocationKey
   selectedSubArea: string
   selectedMineArea: string
   selectedBobberLocation: string
@@ -42,42 +48,44 @@ export interface Configuration extends TimeLessConfiguration {
   endTime: number
 }
 
-function getAppendedFishData(locationFishData: any[]) {
-  let tempFishParamArray: any[] = []
-  for (let i in locationFishData) {
-    let fish = locationFishData[i]
+function getAppendedFishData(locationFishData: CalcFish[]): AppendedFish[] {
+  const tempFishParamArray: AppendedFish[] = []
+  for (const i in locationFishData) {
+    const fish = locationFishData[i]
     if (nonFishItems.includes(fish.Id) || fish.Id.includes('(F)')) {
+      const newFish = { ...fish } as AppendedFish
       switch (fish.Id) {
         case '(O)821':
-          fish.displayname = 'Fossilized Spine'
+          newFish.displayname = 'Fossilized Spine'
           break
         case '(O)825':
-          fish.displayname = 'Snake Skull'
+          newFish.displayname = 'Snake Skull'
           break
         case '(O)797':
-          fish.displayname = 'Pearl'
+          newFish.displayname = 'Pearl'
           break
         case '(F)2332':
-          fish.displayname = 'Gourmand Statue'
+          newFish.displayname = 'Gourmand Statue'
           break
         case '(F)2425':
-          fish.displayname = 'Wall Basket'
+          newFish.displayname = 'Wall Basket'
           break
       }
-      tempFishParamArray.push(fish)
+      tempFishParamArray.push(newFish)
       continue
     }
     if (!fish.Id || !fish.Id.match(/(\d+|Goby)/)) {
       if (fish.Id && fish.Id.match(/Jelly/)) {
-        fish.name = fish.Id.substring(3, fish.Id.length - 5) + ' Jelly'
-        fish.displayname = fish.name
-        fish.weight = 0
-        tempFishParamArray.push(fish)
+        const newFish = { ...fish } as AppendedFish
+        newFish.name = fish.Id.substring(3, fish.Id.length - 5) + ' Jelly'
+        newFish.displayname = newFish.name
+        newFish.weight = 0
+        tempFishParamArray.push(newFish)
       }
       continue
     }
-    const newParams = getFishParameters(fish.Id.match(/(\d+|Goby)/)[0])
-    const mergedParams = { ...fish, ...newParams }
+    const newParams = getFishParameters(fish.Id.match(/(\d+|Goby)/)![0] as CalcFishKey)
+    const mergedParams = { ...fish, ...newParams } as AppendedFish
     // name required as is for targeted bait, separate the parameters so displayname can be anything you want without interfering with targeted bait calculation
     mergedParams.displayname = mergedParams.name
     tempFishParamArray.push(mergedParams)
@@ -85,14 +93,12 @@ function getAppendedFishData(locationFishData: any[]) {
   return tempFishParamArray
 }
 
-type BobberArea = { X: number; Y: number; Width: number; Height: number }
-
 function deepEqual(a?: BobberArea, b?: BobberArea) {
   if (!a || !b) return false
   return a.X == b.X && a.Y == b.Y && a.Width == b.Width && a.Height == b.Height
 }
 
-export function getFilteredFishData(c: InternalConfiguration, appendedFishData: any[]) {
+export function getFilteredFishData(c: InternalConfiguration, appendedFishData: AppendedFish[]) {
   const checkedItems = c.checkedItems
   const selectedSeason = c.selectedSeason
   const selectedSubArea = c.selectedSubArea
@@ -103,24 +109,24 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
   let tempFishParamArray = appendedFishData.slice()
 
   // filter sub area, skip, cause no sub area
-  let correctSubArea = tempFishParamArray.filter(
+  const correctSubArea = tempFishParamArray.filter(
     (fish) => selectedSubArea == null || !fish.FishAreaId || fish.FishAreaId === selectedSubArea
   )
   tempFishParamArray = correctSubArea
 
   // filter bobber position, skip cause no bobber area
-  let bobberDictionary: Record<string, BobberArea> = {
+  const bobberDictionary: Record<string, BobberArea> = {
     Waterfall: { X: 51, Y: 100, Width: 15, Height: 255 },
     SubmarinePier: { X: 0, Y: 32, Width: 12, Height: 255 }
   }
-  let filterBobber = tempFishParamArray.filter(
+  const filterBobber = tempFishParamArray.filter(
     (fish) =>
       !fish.BobberPosition || deepEqual(bobberDictionary[selectedBobberArea], fish.BobberPosition)
   )
   tempFishParamArray = filterBobber
 
   // filter player position for now, flex tape
-  let noPlayerPosition = tempFishParamArray.filter(
+  const noPlayerPosition = tempFishParamArray.filter(
     (fish) =>
       fish.PlayerPosition === null ||
       (fish.Condition && fish.Condition.includes('LEGENDARY_FAMILY'))
@@ -128,14 +134,14 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
   tempFishParamArray = noPlayerPosition
 
   // also flex tape, filter PLAYER_HAS_MAIL for now
-  let noPlayerMailCondition = tempFishParamArray.filter(
+  const noPlayerMailCondition = tempFishParamArray.filter(
     (fish) => !fish.Condition || !fish.Condition.includes('PLAYER_HAS_MAIL')
   )
   tempFishParamArray = noPlayerMailCondition
 
   // filter extended family
   if (!checkedItems.isExtendedFamilyActive) {
-    let noExtendedFamily = tempFishParamArray.filter(
+    const noExtendedFamily = tempFishParamArray.filter(
       (fish) => !fish.Condition || !fish.Condition.includes('LEGENDARY_FAMILY')
     )
     tempFishParamArray = noExtendedFamily
@@ -143,14 +149,14 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
 
   // filter training rod
   if (checkedItems.isUsingTrainingRod && selectedSeason != 'MagicBait') {
-    let setDifficultyCeiling = tempFishParamArray.filter(
+    const setDifficultyCeiling = tempFishParamArray.filter(
       (fish) => !fish.difficulty || fish.difficulty < 50
     )
     tempFishParamArray = setDifficultyCeiling
   }
 
   // filter fishing level requirements
-  let fishingHighEnough = tempFishParamArray.filter(
+  const fishingHighEnough = tempFishParamArray.filter(
     (fish) =>
       (!fish.requiredLevel ||
         fish.IgnoreFishDataRequirements ||
@@ -162,12 +168,12 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
   // filter raining
   if (selectedSeason != 'MagicBait') {
     if (checkedItems.isRaining) {
-      let raining = tempFishParamArray.filter(
+      const raining = tempFishParamArray.filter(
         (fish) => !(fish.weather == 'sunny') || fish.IgnoreFishDataRequirements
       )
       tempFishParamArray = raining
     } else {
-      let sunny = tempFishParamArray.filter(
+      const sunny = tempFishParamArray.filter(
         (fish) => !(fish.weather == 'rainy') || fish.IgnoreFishDataRequirements
       )
       tempFishParamArray = sunny
@@ -175,7 +181,7 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
   }
 
   // filter shore distances
-  let distance = tempFishParamArray.filter(
+  const distance = tempFishParamArray.filter(
     (fish) =>
       (fish.MaxDistanceFromShore <= -1 || waterDepth <= fish.MaxDistanceFromShore) &&
       waterDepth >= fish.MinDistanceFromShore
@@ -185,13 +191,13 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
   // trout derby
   // must be after raining and before time
   if (checkedItems.isTroutDerbyActive) {
-    let rainbowTrout = appendedFishData.filter(
+    const rainbowTrout = appendedFishData.filter(
       (fish) => fish.Condition && fish.Condition.includes('TroutDerby')
     )
     if (rainbowTrout[0]) rainbowTrout[0].displayname = 'Rainbow Trout (from event)'
     tempFishParamArray.concat(rainbowTrout)
   } else {
-    let noTroutDerbyTrout = tempFishParamArray.filter(
+    const noTroutDerbyTrout = tempFishParamArray.filter(
       (fish) => !fish.Condition || (fish.Condition && !fish.Condition.includes('TroutDerby'))
     )
     tempFishParamArray = noTroutDerbyTrout
@@ -199,29 +205,29 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
 
   // squid fest
   if (checkedItems.isSquidFestActive) {
-    let squid = appendedFishData.filter(
+    const squid = appendedFishData.filter(
       (fish) => fish.Condition && fish.Condition.includes('SquidFest')
     )
 
     // squid time
-    for (let i in squid) {
-      let squidCondition = squid[i].Condition
-      if (squidCondition.includes('TIME')) {
-        let timeArray = squidCondition.split(' ')
-        let timeIndex = timeArray.findIndex((e: any) => e == 'TIME')
-        let newTime = [timeArray[timeIndex + 1], timeArray[timeIndex + 2]]
+    for (const i in squid) {
+      const squidCondition = squid[i].Condition
+      if (squidCondition && squidCondition.includes('TIME')) {
+        const timeArray = squidCondition.split(' ')
+        const timeIndex = timeArray.findIndex((e: string) => e == 'TIME')
+        const newTime = [timeArray[timeIndex + 1], timeArray[timeIndex + 2]]
         squid[i].time = newTime
         break
       } else {
         squid[i].time = ['0600', '0600']
       }
     }
-    for (let i in squid) {
+    for (const i in squid) {
       if (squid[i]) squid[i].displayname = 'Squid (from event)'
     }
     tempFishParamArray.concat(squid)
   } else {
-    let noSquidFestSquid = tempFishParamArray.filter(
+    const noSquidFestSquid = tempFishParamArray.filter(
       (fish) => !fish.Condition || (fish.Condition && !fish.Condition.includes('SquidFest'))
     )
     tempFishParamArray = noSquidFestSquid
@@ -229,7 +235,7 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
 
   // filter times
   if (selectedSeason != 'MagicBait') {
-    let timeFilter = tempFishParamArray.filter(
+    const timeFilter = tempFishParamArray.filter(
       (fish) =>
         !fish.time ||
         (fish.IgnoreFishDataRequirements &&
@@ -251,7 +257,10 @@ export interface CalculatorResults {
   finalChance: number
 }
 
-export function getChance(filteredFishData: any[], c: InternalConfiguration): CalculatorResults[] {
+export function getChance(
+  filteredFishData: AppendedFish[],
+  c: InternalConfiguration
+): CalculatorResults[] {
   const checkedItems = c.checkedItems
   const luckBuffs = c.luckBuffs
   const selectedSeason = c.selectedSeason
@@ -267,15 +276,15 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
   let tempFishParamArray: CalculatorResults[] = []
   let tempTrashRate = 1
 
-  for (let i in filteredFishData) {
-    let fish = filteredFishData[i]
+  for (const i in filteredFishData) {
+    const fish = filteredFishData[i]
     if (fish.Id && !fish.Id.match(/Jelly/)) {
       fish['weight'] = calculateWeight(fish)
     }
   }
 
   // get jelly chance
-  let jelly = filteredFishData.find((jelly) => jelly.Id && jelly.Id.match(/Jelly/))
+  const jelly = filteredFishData.find((jelly) => jelly.Id && jelly.Id.match(/Jelly/))
   if (jellyMode === 'longterm') {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     jelly && (jelly.weight = getJellyChance(filteredFishData, luckBuffs))
@@ -293,59 +302,73 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
   if (filteredFishData.length > 0) {
     // get chance
     if (checkedItems.isUsingTargetedBait && selectedSeason != 'MagicBait') {
-      let nonTargetedFish = filteredFishData.filter(
+      const nonTargetedFish = filteredFishData.filter(
         (fish) => !fish.name || fish.name != targetedBaitName
       )
-      let targetedFish = filteredFishData.filter(
+      const targetedFish = filteredFishData.filter(
         (fish) => fish.name && fish.name == targetedBaitName
       )
-      let targetedBait = targetedBaitSingle(nonTargetedFish, targetedFish)
+      const targetedBait = targetedBaitSingle(nonTargetedFish, targetedFish)
       tempTrashRate = targetedBait.caseAChance
       //setTrashRate(tempTrashRate);
 
-      for (let i in nonTargetedFish) {
-        let fish = nonTargetedFish[i]
-        fish.finalChance = rollFishPoolWithTargetedBait(targetedBait, nonTargetedFish, i)
-        tempFishParamArray.push(fish)
+      for (let i = 0; i < nonTargetedFish.length; i++) {
+        const fish = nonTargetedFish[i]
+        const newFish = {
+          Id: fish.Id,
+          displayname: fish.displayname,
+          finalChance: rollFishPoolWithTargetedBait(targetedBait, nonTargetedFish, i)
+        }
+        tempFishParamArray.push(newFish)
       }
 
       if (targetedFish.length > 1) {
-        let fish = {
+        const fish = {
           Id: targetedFish[0].Id,
           displayname: targetedBaitName + ' (multiple entries)',
           finalChance: targetedBait.caseCChance
         }
         tempFishParamArray.push(fish)
       } else {
-        for (let i in targetedFish) {
-          let fish = targetedFish[i]
-          fish.finalChance = targetedBait.caseCChance
-          tempFishParamArray.push(fish)
+        for (const i in targetedFish) {
+          const fish = targetedFish[i]
+          const newFish = {
+            Id: fish.Id,
+            displayname: fish.displayname,
+            finalChance: targetedBait.caseCChance
+          }
+          tempFishParamArray.push(newFish)
         }
       }
     } else {
-      for (let i in filteredFishData) {
-        let fish = filteredFishData[i]
-        fish.finalChance = rollFishPool(filteredFishData, i)
-        tempTrashRate -= fish.finalChance
-        tempFishParamArray.push(fish)
+      for (let i = 0; i < filteredFishData.length; i++) {
+        const fish = filteredFishData[i]
+        const newFish = {
+          Id: fish.Id,
+          displayname: fish.displayname,
+          finalChance: rollFishPool(filteredFishData, i)
+        }
+        tempTrashRate -= newFish.finalChance
+        tempFishParamArray.push(newFish)
       }
       tempTrashRate = Math.max(0, tempTrashRate)
       //setTrashRate(Math.max(0, tempTrashRate));
     }
 
     // handle OR fish (like submarine pier)
-    let orFish: CalculatorResults[] = []
-    for (let i in tempFishParamArray) {
-      let fish = tempFishParamArray[i]
+    const orFish: CalculatorResults[] = []
+    for (const i in tempFishParamArray) {
+      const fish = tempFishParamArray[i]
       if (fish.Id.includes('|')) {
-        let orFishId = fish.Id.split('|')
+        const orFishId = fish.Id.split('|')
         fish.finalChance /= orFishId.length
-        for (let j in orFishId) {
+        for (const j in orFishId) {
           const newParams = getFishParameters(
-            // @ts-expect-error idk man.
-            orFishId[j].match(/(\d+|Goby)/)[0]
+            (orFishId[j].match(/(\d+|Goby)/)?.[0] ?? '') as CalcFishKey
           )
+          if (!newParams) {
+            throw 'Could not find fish parameters for ' + orFishId[j]
+          }
           const mergedParams = { ...fish, ...newParams }
           mergedParams.Id = orFishId[j]
           mergedParams.displayname = mergedParams.name
@@ -366,7 +389,7 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
         chanceMultiplier += 0.4 * fishingLevel
         chanceMultiplier += 0.1 * waterDepth
         chanceMultiplier += checkedItems.isCuriosityLureActive ? 5 : 0
-        let mineFish: { Id: string | null; displayname: string | null; finalChance: number } = {
+        const mineFish: { Id: string | null; displayname: string | null; finalChance: number } = {
           Id: null,
           displayname: null,
           finalChance: 0
@@ -401,9 +424,9 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
             throw 'unknown mine area: ' + selectedMineArea
         }
         if (selectedMineArea == '100') {
-          let mineFishArray = []
+          const mineFishArray = []
           mineFishArray.push(mineFish)
-          let caveJelly = {
+          const caveJelly = {
             Id: '(O)CaveJelly',
             displayname: 'Cave Jelly',
             finalChance: caveJellyChance * (1 - floorFishChance)
@@ -412,7 +435,7 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
           tempFishParamArray = mineFishArray as CalculatorResults[]
           tempTrashRate = 1 - floorFishChance - caveJellyChance
         } else {
-          for (let i in tempFishParamArray) {
+          for (const i in tempFishParamArray) {
             tempFishParamArray[i]['finalChance'] *= 1 - floorFishChance
           }
           tempFishParamArray.push(mineFish as CalculatorResults)
@@ -436,7 +459,7 @@ export function getChance(filteredFishData: any[], c: InternalConfiguration): Ca
     return []
   }
 
-  function calculateWeight(fish: any) {
+  function calculateWeight(fish: AppendedFish) {
     let chanceFromFishData = 0
     if (!fish.IgnoreFishDataRequirements && fish.baseRate) {
       chanceFromFishData = fish.baseRate

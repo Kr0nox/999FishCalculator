@@ -4,7 +4,9 @@ All modified code remains under GPLv3.
 
 Summary of changes:
 
-- Added basic TypeScript support
+- Added full type safety
 - Formatting
 - Removed dependency on lodash and use own deep equal for the one use case
 - Extracted useEffect expressions from home page to functions in index.ts
+- Removed unused functions
+- Made all declarations that can be const const

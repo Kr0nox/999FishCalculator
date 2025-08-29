@@ -1,4 +1,5 @@
 import { getChances, type CheckedItems, type Configuration } from '@/fishcalc'
+import type { CalcSeason } from '@/fishcalc/types'
 import { getTimeToBite } from '@/math/BiteTime'
 import { getChestChance } from '@/math/ChestChance'
 import { strategyFactory } from '@/math/Strategy'
@@ -40,7 +41,8 @@ export const store = defineStore('store', () => {
     targetedBaitName: bait.value.name === 'Targeted' ? bait.value.fish : '',
     checkedItems: checkedItems.value,
     dailyLuck: 0,
-    selectedSeason: bait.value.name == 'Magic' ? 'MagicBait' : season.value.toLowerCase(),
+    selectedSeason:
+      bait.value.name == 'Magic' ? 'MagicBait' : (season.value.toLowerCase() as CalcSeason),
     selectedLocation: calculatorLocation.value.location,
     selectedSubArea: calculatorLocation.value.subLocation,
     selectedMineArea: calculatorLocation.value.mineArea,
