@@ -113,8 +113,8 @@ export function targetedBaitSingle(
         }
       }
     }
-    const recursedSamePrecedence = recursiveMultiply(samePrecedence)
-    const recursedHigherPrecedence = recursiveMultiply(higherPrecedence)
+    const recursedSamePrecedence = summedRecursiveMultiply(samePrecedence)
+    const recursedHigherPrecedence = summedRecursiveMultiply(higherPrecedence)
 
     const pCatchExactly_0_FromHigherPrecedence = multiplyArrayElements(
       invertArray(higherPrecedence)
@@ -171,7 +171,7 @@ export function targetedBaitSingle(
     nonTargetedFishWeights.push(nonTargetedFish[i].weight)
   }
 
-  const recursedNonTargetedFish = recursiveMultiply(nonTargetedFishWeights)
+  const recursedNonTargetedFish = summedRecursiveMultiply(nonTargetedFishWeights)
   const pCatchExactly0 = multiplyArrayElements(invertArray(nonTargetedFishWeights))
   const pCatchExactly1 = chanceOfNFishCaughtFromPool(1, recursedNonTargetedFish)
   const pCatchExactly2 = chanceOfNFishCaughtFromPool(2, recursedNonTargetedFish)
@@ -230,12 +230,8 @@ export function targetedBaitSingle(
   }
 
   function union(probabilityArray: number[]) {
-    const recursedArray = recursiveMultiply(invertArray(probabilityArray))
-    const summedArray: number[] = []
-    for (const i in recursedArray) {
-      const arraySum = sumArrayElements(recursedArray[i])
-      summedArray[i] = arraySum
-    }
+    const recursedArray = summedRecursiveMultiply(invertArray(probabilityArray))
+    const summedArray = recursedArray.map((a) => a.sum)
     let outputChance = 0
     let isEven = true
     for (let i = 1; i < summedArray.length; i++) {
@@ -300,8 +296,8 @@ export function rollFishPoolWithTargetedBait(
     }
     const tbp = targetedBaitParameters
 
-    const recursedSamePrecedence = recursiveMultiply(samePrecedence)
-    const recursedHigherPrecedence = recursiveMultiply(higherPrecedence)
+    const recursedSamePrecedence = summedRecursiveMultiply(samePrecedence)
+    const recursedHigherPrecedence = summedRecursiveMultiply(higherPrecedence)
 
     const firstCatchChance = getFirstCatchChance(recursedSamePrecedence, wantedFishWeight)
     const secondCatchChance = getNthCatchChance(2, recursedSamePrecedence, wantedFishWeight)
@@ -351,35 +347,46 @@ export function rollFishPoolWithTargetedBait(
 // takes [a,b,c,d,e,...], inverts it to [(1-a), (1-b), etc]
 // and outputs [[1],[a,b,c,d,e...],[ab,ac,bc,ad,bd,...],[abc,abd,acd,bcd,abe,...],...]
 // to use with random cumulative P(~fish) calculation in a list
-// btw the array is recursed not the function
-// it goes without saying that this gets factorially expensive, i don't know how expensive
-// starts to lag after 20ish items in the array (at 25 the middle array has 3 million items)
-function recursiveMultiply(chanceArray: number[]) {
+// btw the array is recursed not the function (name from old function from brokencygus)
+// still lags but only for even larger numbers
+interface ResultArray {
+  sum: number
+  length: number
+}
+function summedRecursiveMultiply(chanceArray: number[]): ResultArray[] {
   const invertedArray = invertArray(chanceArray)
-  const resultArray = invertedArray.length > 0 ? [[invertedArray[0]]] : []
-  for (let i = 0; i < invertedArray.length - 1; i++) {
-    const currentLength = resultArray.length
-    for (let j = 0; j < currentLength; j++) {
-      const tempArray = []
-      for (let k = 0; k <= resultArray[currentLength - j - 1].length - 1; k++) {
-        if (resultArray[currentLength - j - 1][k] !== undefined) {
-          const newValue = resultArray[currentLength - j - 1][k] * invertedArray[i + 1]
-          tempArray.push(newValue)
-        }
-      }
-      if (resultArray.length <= currentLength - j) {
-        resultArray[currentLength - j] = []
-      }
-      resultArray[currentLength - j] = resultArray[currentLength - j].concat(tempArray)
-    }
-    resultArray[0] = []
-    const tempArray2 = []
-    for (let k = 0; k < resultArray.length; k++) {
-      tempArray2.push(invertedArray[k])
-    }
-    resultArray[0] = tempArray2
+  const postFixSum = Array.from({ length: chanceArray.length + 1 }, () => 0)
+  for (let i = invertedArray.length - 1; i >= 0; i--) {
+    postFixSum[i] = postFixSum[i + 1] + invertedArray[i]
   }
-  return [[1]].concat(resultArray)
+  const completeResult: ResultArray[] = [{ sum: 1, length: 1 }]
+  if (invertedArray.length == 0) {
+    return completeResult
+  }
+  completeResult.push({ sum: postFixSum[0], length: invertedArray.length })
+
+  for (let elements = 2; elements <= chanceArray.length; elements++) {
+    let sum = 0
+    for (let i = 0; i < invertedArray.length - elements + 1; i++) {
+      const r = product(elements, 1, i)
+      sum += r
+    }
+    completeResult.push({ sum, length: Math.round(binomial(invertedArray.length, elements)) })
+  }
+
+  function product(goalNumberCount: number, currentNumberCount: number, index: number): number {
+    if (currentNumberCount + 1 == goalNumberCount) {
+      return invertedArray[index] * postFixSum[index + 1]
+    }
+    const acc = invertedArray[index]
+    let sum = 0
+    const pad = goalNumberCount - currentNumberCount
+    for (let i = index + 1; i < invertedArray.length - pad + 1; i++) {
+      sum += product(goalNumberCount, currentNumberCount + 1, i)
+    }
+    return acc * sum
+  }
+  return completeResult
 }
 
 export function rollFishPool(filteredFishData: AppendedFish[], index: number) {
@@ -417,7 +424,7 @@ function getNonTargetedChance(
   chanceOfFishYouWant: number
 ) {
   const samePrecedenceChance = getFirstCatchChance(
-    recursiveMultiply(samePrecedence),
+    summedRecursiveMultiply(samePrecedence),
     chanceOfFishYouWant
   )
   const higherPrecedenceChance = multiplyArrayElements(invertArray(higherPrecedence))
@@ -500,12 +507,12 @@ export function getJellyChance(filteredFishData: AppendedFish[], luckBuffs: numb
 // all fish has to fail for the wanted fish to get caught first
 // the only function you want if you're not using targeted bait
 // array needs to be recursively multiplied first
-function getFirstCatchChance(resultArray: number[][], chanceOfFishYouWant: number) {
+function getFirstCatchChance(resultArray: ResultArray[], chanceOfFishYouWant: number) {
   let outputChance = 0
   const totalCoefficient = resultArray.length
   for (const i in resultArray) {
     const currentCoefficient = resultArray[i].length
-    let arraySum = sumArrayElements(resultArray[i])
+    let arraySum = resultArray[i].sum
     arraySum /= currentCoefficient
     arraySum /= totalCoefficient
     outputChance += arraySum
@@ -515,7 +522,7 @@ function getFirstCatchChance(resultArray: number[][], chanceOfFishYouWant: numbe
 
 // generalized Nth (first, second, etc) catch chance
 // equivalent to the above on n=1, ALWAYS USE THE ABOVE WHEN POSSIBLE; THIS IS EXPENSIVE
-function getNthCatchChance(n: number, resultArray: number[][], chanceOfFishYouWant: number) {
+function getNthCatchChance(n: number, resultArray: ResultArray[], chanceOfFishYouWant: number) {
   let outputChance = 0
   const totalCoefficient = resultArray.length
   for (let i = 0; i < resultArray.length; i++) {
@@ -533,12 +540,8 @@ function getNthCatchChance(n: number, resultArray: number[][], chanceOfFishYouWa
 // don't ask how I arrived in this code, I won't be able to explain but I'm sure you can replicate it
 // basically for fish a = P(fish A), b = P(fish B), c = P(fish C), find (1-a)bc, a(1-b)c, ab(1-c) and generalize
 // checksum for n from 0 to nPool should be 1
-function chanceOfNFishCaughtFromPool(n: number, resultArray: number[][]) {
-  const summedArray: number[] = []
-  for (const i in resultArray) {
-    const arraySum = sumArrayElements(resultArray[i])
-    summedArray[i] = arraySum
-  }
+function chanceOfNFishCaughtFromPool(n: number, resultArray: ResultArray[]) {
+  const summedArray = resultArray.map((a) => a.sum)
 
   const nPool = resultArray[1] !== undefined ? resultArray[1].length : 0
   if (nPool < n) {
@@ -568,12 +571,8 @@ function chanceOfNFishCaughtFromPool(n: number, resultArray: number[][]) {
 // somehow this is needed when finding the chance of targeted fish caught second and third in list
 // basically for fish a = P(fish A), b = P(fish B), c = P(fish C), d = P(fish D), find (1-a)bc, a(1-b)c, ab(1-c), (1-a)bd... (1-a)cd.... bc(1-d)
 // make sure result is the same as the above function on m = resultArray
-function chanceOfNFishCaughtFromSelectMFromPool(n: number, m: number, resultArray: number[][]) {
-  const summedArray: number[] = []
-  for (const i in resultArray) {
-    const arraySum = sumArrayElements(resultArray[i])
-    summedArray[i] = arraySum
-  }
+function chanceOfNFishCaughtFromSelectMFromPool(n: number, m: number, resultArray: ResultArray[]) {
+  const summedArray = resultArray.map((a) => a.sum)
 
   const nPool = resultArray[1] !== undefined ? resultArray[1].length : 0
   if (nPool < m) {
@@ -606,15 +605,6 @@ function binomial(n: number, k: number) {
   for (let x = n - k + 1; x <= n; x++) binCoeff *= x
   for (let x = 1; x <= k; x++) binCoeff /= x
   return binCoeff
-}
-
-// util
-function sumArrayElements(inputArray: number[]) {
-  let additionResult = 0
-  for (const i in inputArray) {
-    additionResult += inputArray[i]
-  }
-  return additionResult
 }
 
 // util
