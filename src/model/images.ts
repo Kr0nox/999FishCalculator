@@ -34,7 +34,8 @@ export const LocationImages: Record<string, string> = {
   'Pelican Town': 'https://stardewvalleywiki.com/mediawiki/images/9/94/Gate.png',
   Desert: 'https://stardewvalleywiki.com/mediawiki/images/3/32/Cactus_Fruit.png',
   'Witch Swamp': 'https://stardewvalleywiki.com/mediawiki/images/f/f3/Void_Mayonnaise.png',
-  'Ginger Island': 'https://stardewvalleywiki.com/mediawiki/images/8/85/Ginger.png'
+  'Ginger Island': 'https://stardewvalleywiki.com/mediawiki/images/8/85/Ginger.png',
+  Sewers: 'https://stardewvalleywiki.com/mediawiki/images/2/21/Sewer.png'
 }
 
 const FishImages: Record<string, string> = {

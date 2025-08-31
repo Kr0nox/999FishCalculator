@@ -36,6 +36,10 @@ export const LocationOptions: LocationOption[] = [
     subLocations: []
   },
   {
+    name: 'Sewers',
+    subLocations: ['Default', 'Mutant Bug Lair']
+  },
+  {
     name: 'Desert',
     subLocations: []
   },
@@ -99,6 +103,12 @@ export function getCalculatorLocation(l: Location): CalcLocation {
   }
   if (l.location === 'Pelican Town') {
     location = 'Town'
+  }
+  if (l.location === 'Sewers') {
+    location = 'Sewer'
+    if (l.subLocation === 'Mutant Bug Lair') {
+      location = 'BugLand'
+    }
   }
   if (l.location === 'Desert') {
     location = 'Desert'
