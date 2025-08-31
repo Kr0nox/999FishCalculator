@@ -5,8 +5,10 @@ import {
   type Configuration
 } from '@/fishcalc'
 import type { CalcLocationKey, CalcSeason } from '@/fishcalc/types'
-import type { Fish } from '@/model'
+import { Quality, type Bait, type BaitNames, type Fish } from '@/model'
 import { type CalcLocation } from '@/model/location'
+import { getChanceForQuality } from './Quality'
+import { getTimeToBite } from './BiteTime'
 
 interface Range {
   /** inclusiv */
@@ -24,10 +26,31 @@ export interface InputFish extends Fish {
 interface TacticFishResult extends Configuration {
   results: CalculatorResults[]
 }
+/** Fish ID to seconds per catch */
+type TimeMap = Record<string, number>
+interface TimeTacticFishResult extends TacticFishResult {
+  noDressed?: TimeMap
+  singleDressed?: TimeMap
+  doubleDressed?: TimeMap
+}
+
+/** Fish ID to iridium chance */
+type QualitMap = Record<string, number>
+interface IridiumChances {
+  noQuality: QualitMap
+  singleQuality: QualitMap
+  doubleQuality: QualitMap
+}
+/** depth -> fishing level -> chances */
+type BigQualityMap = Record<number, Record<number, IridiumChances>>
+
+/** fishing level -> bait name -> dressed spinner count -> seconds per bite */
+type TimeToBiteMap = Record<number, Partial<Record<BaitNames, Record<number, number>>>>
 
 export class TacticCalculator {
   public allConfigurations: Configuration[] = []
   public allResults: TacticFishResult[] = []
+  public allTimeResults: TimeTacticFishResult[] = []
   private progressListener: ((report: ProgressReport) => void) | null = null
 
   constructor(
@@ -104,6 +127,73 @@ export class TacticCalculator {
     }
     this.sendProgress({ step: 'Calculating Results for Tactics', progress: total, total })
     return result
+  }
+
+  public calculateTimeForTacticsWithoutCancel() {
+    const perfectOnlyChances = this.getBigIridumumMap(true)
+    const allChances = this.getBigIridumumMap(false)
+    const timeToBite: Record<number, number> = getTimeToBiteMap()
+
+    
+  }
+
+  private getTimeToBiteMap(): TimeToBiteMap {
+    const map: TimeToBiteMap = {}
+    for (let f = this.fishingLevel.min; f <= this.fishingLevel.max; f += this.fishingLevel.step) {
+      map[f] = {}
+      for (const bait of baits) {
+        map[f][bait.name] = {
+          0: getTimeToBite([], f, bait),
+          1: getTimeToBite(['Dressed Spinner'], f, bait),
+          2: getTimeToBite(['Dressed Spinner', 'Dressed Spinner'], f, bait)
+        }
+      }
+    }
+    return map
+  }
+
+  private getBigIridumumMap(perfectableOnly: boolean): BigQualityMap {
+    const map: BigQualityMap = {}
+    for (let d = this.depth.min; d <= this.depth.max; d += this.depth.step) {
+      for (let f = this.fishingLevel.min; f <= this.fishingLevel.max; f += this.fishingLevel.step) {
+        if (!map[d]) {
+          map[d] = {}
+        }
+        if (!map[d][f]) {
+          map[d][f] = this.getIridiumChances(d, f, perfectableOnly)
+        }
+      }
+    }
+    return map
+  }
+
+  private getIridiumChances(
+    depth: number,
+    fishingLevel: number,
+    perfectableOnly: boolean
+  ): IridiumChances {
+    const noQuality: QualitMap = {}
+    const singleQuality: QualitMap = {}
+    const doubleQuality: QualitMap = {}
+    for (const f of this.fish) {
+      if (perfectableOnly && !f.canCatchPerfect) {
+        continue
+      }
+      const pNoQuality = getChanceForQuality(Quality.IRIDIUM, depth, fishingLevel, [])
+      const pSingleQuality = getChanceForQuality(Quality.IRIDIUM, depth, fishingLevel, [
+        'Quality Bobber'
+      ])
+      const pDoubleQuality = getChanceForQuality(Quality.IRIDIUM, depth, fishingLevel, [
+        'Quality Bobber',
+        'Quality Bobber'
+      ])
+      noQuality[f.Id] = 1 / (f.canCatchPerfect ? pNoQuality.perfect : pNoQuality.nonPerfect)
+      singleQuality[f.Id] =
+        1 / (f.canCatchPerfect ? pSingleQuality.perfect : pSingleQuality.nonPerfect)
+      doubleQuality[f.Id] =
+        1 / (f.canCatchPerfect ? pDoubleQuality.perfect : pDoubleQuality.nonPerfect)
+    }
+    return { noQuality, singleQuality, doubleQuality }
   }
 
   private buildRangeConfigurations(): RangeConfiguration[] {
@@ -229,6 +319,13 @@ export class TacticCalculator {
 
 const seasons: CalcSeason[] = ['spring', 'summer', 'fall', 'winter']
 const bools = [true, false]
+const baits: Bait[] = [
+  {name:'Deluxe'},
+  {name:'Wild'},
+  {name:'Magic'},
+  {name:'Challenge'},
+  {name:'Targeted', fish:''}
+]
 
 interface NonRangeConfiguration extends Partial<Configuration> {
   targetedBaitName: string

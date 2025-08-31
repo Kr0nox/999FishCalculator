@@ -18,7 +18,7 @@ abstract class Strategy {
   abstract calculateTimePerCatch(fish: CalculatorResults): number | undefined
 }
 
-class DefaultStrategy extends Strategy {
+export class DefaultStrategy extends Strategy {
   constructor(catchTime: number, timeToBite: number, catchOverhead: number) {
     super(catchTime, timeToBite, catchOverhead)
     this.timePerCast = this.calculateTimePerCast()

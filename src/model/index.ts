@@ -25,6 +25,8 @@ export interface TargetedBait {
   fish: string
 }
 
+export type BaitNames = BaseBait['name'] | TargetedBait['name']
+
 export type Bait = BaseBait | TargetedBait
 
 export interface Fish {
