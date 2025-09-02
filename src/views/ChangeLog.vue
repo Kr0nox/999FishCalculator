@@ -27,6 +27,7 @@
               >/resize</RouterLink
             >
           </li>
+          <li>Allow entering amount of fish for challenge bait</li>
         </ul>
       </div>
       <h2>2025/08/31</h2>

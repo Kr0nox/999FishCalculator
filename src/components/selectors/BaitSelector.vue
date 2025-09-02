@@ -22,10 +22,14 @@
           <img :src="BaitImages['Challenge']" class="h-4" />
           <span class="flex-1">Challenge Bait</span>
           <FontAwesomeIcon
-            v-if="store().bait.name == 'Challenge'"
             :icon="faGears"
             class="text-red-950"
-            @click="showChallengeBaitModifier = true"
+            @click="
+              (e: Event) => {
+                e.stopPropagation()
+                showChallengeBaitModifier = true
+              }
+            "
           />
         </div>
         <TargetedBaitModifier
