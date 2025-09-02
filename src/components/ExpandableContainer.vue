@@ -1,12 +1,13 @@
 <template>
   <ContainerComponent>
-    <div class="flex flex-col gap-2 md:max-h-full md:overflow-hidden">
+    <div class="flex flex-col gap-2 md:max-h-full">
       <h1
         class="flex cursor-pointer items-center gap-2 text-xl font-bold"
         @click="expanded = !expanded"
       >
         <FontAwesomeIcon class="h-4" :icon="expanded ? faChevronDown : faChevronRight" />
-        <span>{{ title }}</span>
+        <div v-if="props.title" class="flex-1">{{ title }}</div>
+        <div v-if="$slots.title" class="flex-1"><slot name="title" /></div>
       </h1>
       <div v-if="expanded" class="flex flex-1 md:overflow-hidden">
         <slot />
@@ -20,10 +21,11 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import ContainerComponent from './ContainerComponent.vue'
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
-defineProps({
+const props = defineProps({
   title: {
     type: String,
-    required: true
+    default: undefined,
+    required: false
   }
 })
 
