@@ -49,7 +49,7 @@ export const LocationOptions: LocationOption[] = [
   },
   {
     name: 'Ginger Island',
-    subLocations: ['North', 'West (River)', 'West (Ocean)', 'South', 'Pirate Cove']
+    subLocations: ['North', 'West (River)', 'West (Ocean)', 'South', 'Pirate Cove', 'Caldera']
   }
 ]
 
@@ -130,6 +130,8 @@ export function getCalculatorLocation(l: Location): CalcLocation {
       location = 'IslandSouth'
     } else if (l.subLocation === 'Pirate Cove') {
       location = 'IslandSouthEastCave'
+    } else if (l.subLocation === 'Caldera') {
+      location = 'Caldera'
     }
   }
   if (!location) {

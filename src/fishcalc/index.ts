@@ -84,6 +84,13 @@ function getAppendedFishData(locationFishData: CalcFish[]): AppendedFish[] {
       }
       continue
     }
+    if (fish.Id && fish.Id.match(/LavaEel_Depth/)) {
+      const newFish = { ...fish } as AppendedFish
+      newFish.name = 'Lava Eel'
+      newFish.displayname = newFish.name
+      tempFishParamArray.push(newFish)
+      continue
+    }
     const newParams = getFishParameters(fish.Id.match(/(\d+|Goby)/)![0] as CalcFishKey)
     const mergedParams = { ...fish, ...newParams } as AppendedFish
     // name required as is for targeted bait, separate the parameters so displayname can be anything you want without interfering with targeted bait calculation
