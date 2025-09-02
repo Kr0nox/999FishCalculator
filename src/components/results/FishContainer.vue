@@ -43,7 +43,11 @@ function getTimePerCatch(fish: CalculatorResults): number | undefined {
   }
 
   if (store().bait.name == 'Challenge') {
-    return time / 3
+    const catchAmount = store().getChallengeBaitCatchAmount(fish.Id)
+    if (catchAmount == 0) {
+      return undefined
+    }
+    return time / catchAmount
   }
   if (store().bait.name == 'Wild') {
     return time / 1.25

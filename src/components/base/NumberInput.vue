@@ -10,10 +10,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  defaultValue: {
+    type: Number,
+    default: 0
   }
 })
 
@@ -28,7 +32,7 @@ const inputModel = computed({
     if (!isNaN(parsedValue)) {
       model.value = parsedValue
     } else {
-      model.value = 0 // Reset to 0 if the input is invalid
+      model.value = props.defaultValue // Reset to default if the input is invalid
     }
   }
 })

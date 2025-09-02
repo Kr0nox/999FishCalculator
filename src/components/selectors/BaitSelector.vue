@@ -14,6 +14,36 @@
         </div>
       </ContainerComponent>
       <ContainerComponent
+        :class="store().bait.name == 'Challenge' ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
+        class="cursor-pointer"
+        @click="store().bait = { name: 'Challenge' }"
+      >
+        <div class="flex items-center gap-2">
+          <img :src="BaitImages['Challenge']" class="h-4" />
+          <span class="flex-1">Challenge Bait</span>
+          <FontAwesomeIcon
+            v-if="store().bait.name == 'Challenge'"
+            :icon="faGears"
+            class="text-red-950"
+            @click="showChallengeBaitModifier = true"
+          />
+        </div>
+        <TargetedBaitModifier
+          v-if="showChallengeBaitModifier"
+          @close="showChallengeBaitModifier = false"
+        />
+      </ContainerComponent>
+      <ContainerComponent
+        :class="store().bait.name == 'Magnet' ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
+        class="cursor-pointer"
+        @click="store().bait = { name: 'Magnet' }"
+      >
+        <div class="flex items-center gap-2">
+          <img :src="BaitImages['Magnet']" class="h-4" />
+          Magnet
+        </div>
+      </ContainerComponent>
+      <ContainerComponent
         :class="store().bait.name == 'Targeted' ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
         class="cursor-pointer"
         @click="store().bait = { name: 'Targeted', fish: '' }"
@@ -40,17 +70,14 @@ import type { Bait, TargetedBait } from '@/model'
 import ContainerComponent from '../ContainerComponent.vue'
 import { store } from '@/store'
 import { BaitImages, getFishImage } from '@/model/images'
-import { computed, onMounted, useTemplateRef } from 'vue'
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import autocomplete from 'autocompleter'
 import { BaitableFish } from '@/model/Fish'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faGears } from '@fortawesome/free-solid-svg-icons'
+import TargetedBaitModifier from './ChallengeBaitModifier.vue'
 
-const simpleBaitTypes: Bait[] = [
-  { name: 'Deluxe' },
-  { name: 'Wild' },
-  { name: 'Magic' },
-  { name: 'Challenge' },
-  { name: 'Magnet' }
-]
+const simpleBaitTypes: Bait[] = [{ name: 'Deluxe' }, { name: 'Wild' }, { name: 'Magic' }]
 
 const targetedBaitImage = computed(() => {
   if (store().bait.name !== 'Targeted') {
@@ -60,6 +87,8 @@ const targetedBaitImage = computed(() => {
 })
 
 const targetedTypeInput = useTemplateRef('targetedTypeInput')
+
+const showChallengeBaitModifier = ref(false)
 
 function cancelEvent(e: Event) {
   e.preventDefault()

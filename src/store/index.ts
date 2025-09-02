@@ -4,7 +4,7 @@ import { getTimeToBite } from '@/math/BiteTime'
 import { getChestChance } from '@/math/ChestChance'
 import { strategyFactory } from '@/math/Strategy'
 import type { Tackle, Bait, Location, Season, Time, Fish } from '@/model'
-import { checkIdEquality } from '@/model/Fish'
+import { checkIdEquality, getIdNumber } from '@/model/Fish'
 import { getCalculatorLocation } from '@/model/location'
 import { timeToNumber } from '@/model/time'
 import { defineStore } from 'pinia'
@@ -93,6 +93,19 @@ export const store = defineStore('store', () => {
     )
   )
 
+  const challengeBaitCatchAmount = ref<Record<string, number>>(
+    JSON.parse(localStorage.getItem(challengeBaitFishKey) || '{}')
+  )
+  function setChallengeBaitCatchAmount(fishId: string, amount: number) {
+    challengeBaitCatchAmount.value[getIdNumber(fishId)] = amount
+  }
+  function getChallengeBaitCatchAmount(fishId: string) {
+    return challengeBaitCatchAmount.value[getIdNumber(fishId)] ?? 3
+  }
+  function saveChallengeBaitCatchAmounts() {
+    localStorage.setItem(challengeBaitFishKey, JSON.stringify(challengeBaitCatchAmount.value))
+  }
+
   return {
     results,
     prioritisedFish,
@@ -119,6 +132,12 @@ export const store = defineStore('store', () => {
     calculatorConfiguration,
     timeToBite,
     castingOverhead,
-    catchTime
+    catchTime,
+    challengeBaitCatchAmount,
+    setChallengeBaitCatchAmount,
+    getChallengeBaitCatchAmount,
+    saveChallengeBaitCatchAmounts
   }
 })
+
+const challengeBaitFishKey = '999fish:challenge-bait-fish'
