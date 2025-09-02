@@ -21,6 +21,12 @@
           <li>Add selection for chest items</li>
           <li>Add Caldera as Ginger Island sublocation</li>
           <li>Add this changelog</li>
+          <li>
+            Add resizable view under
+            <RouterLink class="text-blue-700 underline" :to="{ name: 'Resizable' }"
+              >/resize</RouterLink
+            >
+          </li>
         </ul>
       </div>
       <h2>2025/08/31</h2>
