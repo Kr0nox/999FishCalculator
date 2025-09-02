@@ -8,13 +8,14 @@
       <a href="https://www.github.com/Kr0nox"><FontAwesomeIcon :icon="faGithub" />Kronox</a>,
       <a href="https://github.com/Kr0nox/999FishCalculator"
         ><FontAwesomeIcon :icon="faGithub" />Source Code</a
-      >. This tool is heavily inspired by
+      >. <RouterLink :to="{ name: 'Changelog' }">Changelog</RouterLink>. This tool is heavily
+      inspired by
       <a href="https://brokencygnus.github.io/stardew-fishing-calc/home"
         >brokencygnus Fishing Calculator</a
       >. Many of the graphics used are owned by
       <a href="https://stardewvalleywiki.com/ConcernedApe">ConcernedApe</a> and imported from the
       <a href="https://stardewvalleywiki.com">Stardew Valley Wiki</a>.
-      <RouterLink :to="{ name: 'Math' }">The math behind this</RouterLink>
+      <RouterLink :to="{ name: 'Math' }">The math behind this</RouterLink>.
     </div>
   </div>
 </template>
