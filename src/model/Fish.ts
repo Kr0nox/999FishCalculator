@@ -22,7 +22,10 @@ export const BaitableFish: Fish[] = FishList.filter(
       'Sea Jelly',
       'River Jelly',
       'Cave Jelly',
-      'Trash'
+      'Trash',
+      'Clam',
+      'Crayfish',
+      'Lobster'
     ].includes(fish.displayname)
 )
 

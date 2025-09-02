@@ -24,10 +24,13 @@
         <div
           v-for="fish in displayedFish"
           :key="fish.Id"
-          class="grid w-60 grid-cols-[24px_1fr_32px] items-center gap-2 rounded bg-slate-300 px-2 py-1"
+          class="grid w-[300px] grid-cols-[24px_1fr_32px] items-center gap-2 rounded bg-slate-300 px-2 py-1"
         >
           <img :src="getFishImage(fish.displayname)" />
-          <span>{{ fish.displayname }}</span>
+          <span class="flex items-center gap-2"
+            >{{ fish.displayname }}
+            <span class="text-sm text-slate-600">{{ getDifficulty(fish.Id) }}</span></span
+          >
           <NumberInput
             :model-value="store().getChallengeBaitCatchAmount(fish.Id)"
             @update:model-value="(v) => store().setChallengeBaitCatchAmount(fish.Id, v)"
@@ -48,6 +51,8 @@ import { BaitableFish, checkIdEquality } from '@/model/Fish'
 import type { Fish } from '@/model'
 import { getFishImage } from '@/model/images'
 import NumberInput from '../base/NumberInput.vue'
+import { getFishParameters } from '@/fishcalc/lib/fishdata'
+import type { CalcFishKey } from '@/fishcalc/types'
 
 const emit = defineEmits(['close'])
 
@@ -72,5 +77,11 @@ function _getFishFromLocationAndSeason() {
   return fish
     .map((f) => BaitableFish.find((bf) => checkIdEquality(f.Id, bf.Id)))
     .filter((f) => f) as Fish[]
+}
+
+function getDifficulty(id: string) {
+  const info = getFishParameters(id as CalcFishKey)
+  if (!info) return ''
+  return `(${info.difficulty} ${info.type})`
 }
 </script>
