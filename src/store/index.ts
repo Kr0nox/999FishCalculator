@@ -81,7 +81,9 @@ export const store = defineStore('store', () => {
       catchTime.value,
       timeToBite.value,
       castingOverhead.value,
-      cancelChests.value ? { cancelTime: chestCancelTime.value, chestChance: 0.5 } : undefined,
+      cancelChests.value
+        ? { cancelTime: chestCancelTime.value, chestChance: chestChance.value }
+        : undefined,
       cancelOtherFish.value
         ? {
             cancelTime: cancelOtherFishTime.value,
