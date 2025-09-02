@@ -48,7 +48,10 @@
     <template #default>
       <div class="flex flex-col gap-2 md:max-h-full md:flex-1 md:overflow-auto">
         <div>Chest chance: {{ (store().chestChance * 100).toFixed(2) }}%</div>
-        <div>Time per chest: {{ averageTimePerChest.toFixed(2) }} s/chest</div>
+        <div>
+          Time per chest: {{ averageTimePerChest.toFixed(2) }} s/chest |
+          {{ chestsPerHour.toFixed(2) }} chests/h
+        </div>
         <div v-if="showRoe" class="flex flex-col gap-2">
           <RoeDisplay
             v-for="f in baitFish"
@@ -119,6 +122,7 @@ const averageTimePerChest = computed(() => {
   const timePerCast = store().strategy.calculateTimePerCast()
   return timePerCast / (store().chestChance * baitableFishChance.value)
 })
+const chestsPerHour = computed(() => (1 / averageTimePerChest.value) * 3600)
 
 const showItemSelector = ref(false)
 
