@@ -5,6 +5,7 @@ import { getChestChance } from '@/math/ChestChance'
 import { strategyFactory } from '@/math/Strategy'
 import type { Tackle, Bait, Location, Season, Time, Fish } from '@/model'
 import { checkIdEquality, getIdNumber } from '@/model/Fish'
+import type { FishAmountData } from '@/model/FishAmountData'
 import { getCalculatorLocation } from '@/model/location'
 import { timeToNumber } from '@/model/time'
 import { defineStore } from 'pinia'
@@ -106,6 +107,17 @@ export const store = defineStore('store', () => {
     localStorage.setItem(challengeBaitFishKey, JSON.stringify(challengeBaitCatchAmount.value))
   }
 
+  const fishAmounts = ref<Record<string, FishAmountData>>({})
+  function setFishAmounts(fishId: string, amountData: FishAmountData) {
+    fishAmounts.value[getIdNumber(fishId)] = amountData
+  }
+  function getFishAmounts(fishId: string) {
+    return fishAmounts.value[getIdNumber(fishId)] ?? { amount: 999, hasLimit: false }
+  }
+  function resetFishAmounts() {
+    fishAmounts.value = {}
+  }
+
   return {
     results,
     prioritisedFish,
@@ -136,7 +148,11 @@ export const store = defineStore('store', () => {
     challengeBaitCatchAmount,
     setChallengeBaitCatchAmount,
     getChallengeBaitCatchAmount,
-    saveChallengeBaitCatchAmounts
+    saveChallengeBaitCatchAmounts,
+    fishAmounts,
+    setFishAmounts,
+    getFishAmounts,
+    resetFishAmounts
   }
 })
 

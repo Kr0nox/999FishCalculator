@@ -6,7 +6,7 @@
         <div class="relative">
           <FontAwesomeIcon
             :icon="faGears"
-            class="h-1"
+            class="cursor-pointer text-base font-normal text-slate-600"
             @click="(e: Event) => changeShowItemSelector(e)"
           />
           <div

@@ -20,9 +20,8 @@
 <script setup lang="ts">
 import type { CalculatorResults } from '@/fishcalc'
 import { getFishImage } from '@/model/images'
+import type { SecondaryInfo } from '@/model/SecondaryInformation'
 import { computed, type PropType } from 'vue'
-
-type SecondaryInfo = { kind: 'perStack' } | { kind: 'forTime'; time: number }
 
 const props = defineProps({
   fish: {

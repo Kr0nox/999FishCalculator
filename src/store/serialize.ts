@@ -1,5 +1,6 @@
 import type { Bait, Fish, Season, Tackle, Time, Location } from '@/model'
 import { store } from '.'
+import type { FishAmountData } from '@/model/FishAmountData'
 
 export interface Data {
   location: Location
@@ -23,6 +24,7 @@ export interface Data {
   fishStrategy: FishStrategy
 
   challengeBaitFishAmount?: Record<string, number>
+  fishAmounts?: Record<string, FishAmountData>
 }
 
 interface ChestStrategy {
@@ -64,7 +66,8 @@ function fromStore(): Data {
       cancelTime: store().cancelOtherFishTime,
       prioritisedFish: store().prioritisedFish
     },
-    challengeBaitFishAmount: store().challengeBaitCatchAmount
+    challengeBaitFishAmount: store().challengeBaitCatchAmount,
+    fishAmounts: store().fishAmounts
   }
 }
 
@@ -94,6 +97,9 @@ function toStore(data: Data): void {
 
   if (data.challengeBaitFishAmount) {
     store().challengeBaitCatchAmount = data.challengeBaitFishAmount
+  }
+  if (data.fishAmounts) {
+    store().fishAmounts = data.fishAmounts
   }
 }
 
