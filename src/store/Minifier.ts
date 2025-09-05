@@ -3,6 +3,7 @@ import type { Data } from './serialize'
 import { numberToTime, timeToNumber } from '@/model/time'
 import { findFish, getFishParameters } from '@/fishcalc/lib/fishdata'
 import type { CalcFishKey } from '@/fishcalc/types'
+import type { FishAmountData } from '@/model/FishAmountData'
 
 type Limiter = { type: 'length'; length: number } | { type: 'symbol'; symbol: string }
 type KeyType = keyof Data
@@ -358,6 +359,35 @@ export class ChallangeBaitFishAmountMinifier extends Minifier<'challengeBaitFish
   }
 }
 
+export class FishLimitAmountMinifier extends Minifier<'fishAmounts'> {
+  constructor() {
+    super('fishAmounts', { type: 'symbol', symbol: '.' })
+  }
+
+  protected _minify(value: Data['fishAmounts']): string {
+    if (!value) return ''
+    return Object.entries(value)
+      .map(([fish, d]) => {
+        return `${fish}${d.hasLimit}${d.amount}`
+      })
+      .join('|')
+  }
+
+  protected _unminify(value: string): Record<string, FishAmountData> | undefined {
+    const result: Record<string, FishAmountData> = {}
+    const entries = value.split('|')
+    for (const entry of entries) {
+      const fishId = entry.slice(0, 3)
+      const hasLimit = entry[3] === '1'
+      const amount = parseInt(entry.slice(4)) || 0
+      if (fishId && amount) {
+        result[fishId] = { hasLimit, amount }
+      }
+    }
+    return result
+  }
+}
+
 const minifiers: { [K in keyof Data]-?: Minifier<K> } = {
   location: new LocationMinifier(),
   season: new SeasonMinifier(),
@@ -379,7 +409,8 @@ const minifiers: { [K in keyof Data]-?: Minifier<K> } = {
   chestStrategy: new ChestStrategyMinifier(),
   fishStrategy: new FishStrategyMinifier(),
 
-  challengeBaitFishAmount: new ChallangeBaitFishAmountMinifier()
+  challengeBaitFishAmount: new ChallangeBaitFishAmountMinifier(),
+  fishAmounts: new FishLimitAmountMinifier()
 }
 
 const keyOrder: KeyType[] = [
@@ -403,7 +434,8 @@ const keyOrder: KeyType[] = [
   'chestStrategy',
   'fishStrategy',
 
-  'challengeBaitFishAmount'
+  'challengeBaitFishAmount',
+  'fishAmounts'
 ]
 
 export function minify(data: Data): string {
