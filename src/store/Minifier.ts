@@ -176,7 +176,7 @@ export class FishStrategyMinifier extends Minifier<'fishStrategy'> {
     const cancelTime = value.cancelTime.toString()
     const prioritisedFish = value.prioritisedFish
       .map((f) => {
-        const id = findFish(f.Id) || '???'
+        const id = f.Id || '???'
         return id
       })
       .join('')
