@@ -1,5 +1,6 @@
 import type { Bait, Fish, Season, Tackle, Time, Location } from '@/model'
 import { store } from '.'
+import { minify, unminify } from './Minifier'
 
 export interface Data {
   location: Location
@@ -99,11 +100,37 @@ function toStore(data: Data): void {
 
 export function save() {
   const data = fromStore()
-  const json = JSON.stringify(data)
-  navigator.clipboard.writeText(json)
+  const text = minify(data)
+  navigator.clipboard.writeText(text)
+}
+
+export function loadData(data: string) {
+  let json: Data | undefined
+  if (data.startsWith('{')) {
+    json = JSON.parse(data) as Data
+  } else {
+    try {
+      const url = new URL(data)
+      data = url.hash
+    } catch (e) {
+      void e
+    }
+    if (data.startsWith('#')) {
+      data = data.substring(1)
+    }
+    json = unminify(data)
+  }
+  return json
 }
 
 export function load(data: string) {
-  const json = JSON.parse(data)
-  toStore(json)
+  toStore(loadData(data))
+}
+
+export function share() {
+  const data = fromStore()
+  const compressed = minify(data)
+  const url = new URL(window.location.href)
+  url.hash = compressed
+  navigator.clipboard.writeText(url.toString())
 }

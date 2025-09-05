@@ -23,6 +23,12 @@
 <script setup lang="ts">
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { load } from './store/serialize'
+
+const hash = window.location.hash
+if (hash) {
+  load(hash)
+}
 </script>
 
 <style scoped>

@@ -26,3 +26,8 @@ export function getFishParameters(id: CalcFishKey): FishParameters | null {
 export function getFishIds(): CalcFishKey[] {
   return Object.keys(fishData) as CalcFishKey[]
 }
+
+export function findFish(name: string) {
+  const ids = getFishIds()
+  return ids.find((id) => getFishParameters(id)?.name === name) || null
+}
