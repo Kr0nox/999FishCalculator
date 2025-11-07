@@ -23,6 +23,7 @@ export interface Data {
   fishStrategy: FishStrategy
 
   challengeBaitFishAmount?: Record<string, number>
+  dailyLuck?: number
 }
 
 interface ChestStrategy {
@@ -64,7 +65,8 @@ function fromStore(): Data {
       cancelTime: store().cancelOtherFishTime,
       prioritisedFish: store().prioritisedFish
     },
-    challengeBaitFishAmount: store().challengeBaitCatchAmount
+    challengeBaitFishAmount: store().challengeBaitCatchAmount,
+    dailyLuck: store().dailyLuck
   }
 }
 
@@ -94,6 +96,9 @@ function toStore(data: Data): void {
 
   if (data.challengeBaitFishAmount) {
     store().challengeBaitCatchAmount = data.challengeBaitFishAmount
+  }
+  if (data.dailyLuck) {
+    store().dailyLuck = data.dailyLuck
   }
 }
 

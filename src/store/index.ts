@@ -27,6 +27,8 @@ export const store = defineStore('store', () => {
   const extendedFamily = ref(false)
   const pirateProfession = ref(true)
 
+  const dailyLuck = ref(0)
+
   const checkedItems = computed<CheckedItems>(() => ({
     isCuriosityLureActive: tackles.value.includes('Curiosity Lure'),
     isExtendedFamilyActive: extendedFamily.value,
@@ -40,7 +42,7 @@ export const store = defineStore('store', () => {
   const calculatorConfiguration = computed<Configuration>(() => ({
     targetedBaitName: bait.value.name === 'Targeted' ? bait.value.fish : '',
     checkedItems: checkedItems.value,
-    dailyLuck: 0,
+    dailyLuck: dailyLuck.value,
     selectedSeason:
       bait.value.name == 'Magic' ? 'MagicBait' : (season.value.toLowerCase() as CalcSeason),
     selectedLocation: calculatorLocation.value.location,
@@ -59,7 +61,7 @@ export const store = defineStore('store', () => {
   const catchTime = ref(8)
 
   const chestChance = computed(() =>
-    getChestChance(tackles.value, bait.value, luck.value, pirateProfession.value)
+    getChestChance(tackles.value, bait.value, dailyLuck.value, luck.value, pirateProfession.value)
   )
 
   const cancelChests = ref(false)
@@ -125,6 +127,7 @@ export const store = defineStore('store', () => {
     luck,
     pirateProfession,
     depth,
+    dailyLuck,
     raining,
     squidFest,
     troutDerby,

@@ -52,6 +52,7 @@
           Time per chest: {{ averageTimePerChest.toFixed(2) }} s/chest |
           {{ chestsPerHour.toFixed(2) }} chests/h
         </div>
+        <div v-if="showRoe">Average Roe Amount: {{ roeAmount(store().dailyLuck).toFixed(2) }}</div>
         <div v-if="showRoe" class="flex flex-col gap-2">
           <RoeDisplay
             v-for="f in baitFish"
@@ -98,6 +99,7 @@ import { computed, ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGears } from '@fortawesome/free-solid-svg-icons'
 import ChestItemDisplay from './ChestItemDisplay.vue'
+import { roeAmount } from '@/math/ChestChance'
 
 const props = defineProps({
   fish: {

@@ -9,6 +9,15 @@
       <h1 class="text-2xl font-bold">Changelog</h1>
     </div>
     <main>
+      <h2>2025/11/07</h2>
+      <div>
+        Add daily luck
+        <ul>
+          <li>Add slider</li>
+          <li>Make it influence chest chances</li>
+          <li>Make it influence the average roe amount</li>
+        </ul>
+      </div>
       <h2>2025/09/02</h2>
       <div>
         <ul>

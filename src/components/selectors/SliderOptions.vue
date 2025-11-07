@@ -10,6 +10,7 @@
       />
       <SliderComponent v-model="store().fishingLevel" :min="0" :max="19" label="Fishing Level:" />
       <SliderComponent v-model="store().luck" :min="0" :max="13" label="Luck Buffs:" />
+      <LuckSelector />
     </div>
   </ContainerComponent>
 </template>
@@ -19,6 +20,7 @@ import { computed } from 'vue'
 import SliderComponent from '../base/SliderComponent.vue'
 import ContainerComponent from '../ContainerComponent.vue'
 import { store } from '@/store'
+import LuckSelector from './LuckSelector.vue'
 
 const depth = computed({
   get: () => lvlToSlider(store().depth),

@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import type { CalculatorResults } from '@/fishcalc'
+import { roeAmount } from '@/math/ChestChance'
 import { getFishImage } from '@/model/images'
 import { store } from '@/store'
 import { computed, type PropType } from 'vue'
@@ -45,7 +46,7 @@ const timePerRoeChest = computed(() => {
 })
 
 const timePerRoe = computed(() => {
-  return timePerRoeChest.value / 3.5
+  return timePerRoeChest.value / roeAmount(store().dailyLuck)
 })
 
 const timePerStack = computed(() => {
