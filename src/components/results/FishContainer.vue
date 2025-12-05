@@ -1,7 +1,12 @@
 <template>
-  <ContainerComponent class="bg-slate-100 p-2!">
+  <ContainerComponent class="bg-slate-100 p-2!" :class="{ 'opacity-80': store().configChanged }">
     <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
-      <h1 class="text-xl font-bold">Fish</h1>
+      <h1 class="h-fit text-xl font-bold">
+        Fish
+        <span v-if="store().configChanged" class="float-right text-xs"
+          >Configuration changed.<br />Results not accurate</span
+        >
+      </h1>
       <div class="flex flex-col text-sm">
         <span>Average Time to Bite: {{ store().timeToBite.toFixed(2) }} seconds</span>
         <span

@@ -4,6 +4,9 @@
     <div
       class="row-start-2 flex flex-col gap-5 md:row-start-1 md:h-full md:max-h-full md:overflow-hidden"
     >
+      <ContainerComponent class="w-fill shrink-0 bg-white" @click="runSimulation()"
+        >Run Simulation</ContainerComponent
+      >
       <FishContainer class="w-fill top col-start-2" :fish="store().results"></FishContainer>
       <ChestContainer class="w-fill bottom h-fit max-h-1/2" :fish="store().results" />
     </div>
@@ -15,6 +18,13 @@ import { store } from '../store'
 import FishContainer from '../components/results/FishContainer.vue'
 import SelectorContainer from '../components/selectors/SelectorContainer.vue'
 import ChestContainer from '../components/results/ChestContainer.vue'
+import ContainerComponent from '@/components/ContainerComponent.vue'
+import { getChances } from '@/fishcalc'
+
+function runSimulation() {
+  store().results = getChances(store().calculatorConfiguration)
+  store().configChanged = false
+}
 </script>
 
 <style scoped>

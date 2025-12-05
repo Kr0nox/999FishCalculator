@@ -20,6 +20,14 @@
       <div class="flex flex-col gap-3 md:col-start-3 md:row-span-2 md:row-start-1">
         <LocationSelector />
         <TimeSelector />
+        <ContainerComponent class="border-yellow-600 bg-yellow-200">
+          <div class="font-bold">⚠️ Simulating fish is still in "beta"</div>
+          <div>
+            Running the simulation multiple times will lead to slightly differing results each time.
+            <br />
+            It might not work correctly for certain areas, especially the mines.
+          </div>
+        </ContainerComponent>
       </div>
     </div>
   </ContainerComponent>

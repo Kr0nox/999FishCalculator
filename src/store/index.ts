@@ -1,4 +1,4 @@
-import { getChances, type CheckedItems, type Configuration } from '@/fishcalc'
+import { type CalculatorResults, type CheckedItems, type Configuration } from '@/fishcalc'
 import type { CalcSeason } from '@/fishcalc/types'
 import { getTimeToBite } from '@/math/BiteTime'
 import { getChestChance } from '@/math/ChestChance'
@@ -8,7 +8,7 @@ import { checkIdEquality, getIdNumber } from '@/model/Fish'
 import { getCalculatorLocation } from '@/model/location'
 import { timeToNumber } from '@/model/time'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch, type Ref } from 'vue'
 
 export const store = defineStore('store', () => {
   const location = ref<Location>({ location: 'Beach', subLocation: 'Default' })
@@ -70,7 +70,7 @@ export const store = defineStore('store', () => {
   const cancelOtherFishTime = ref(2)
   const prioritisedFish = ref<Fish[]>([])
 
-  const results = computed(() => getChances(calculatorConfiguration.value))
+  const results: Ref<CalculatorResults[]> = ref([])
 
   const prioritisedChanceFish = computed(() =>
     prioritisedFish.value.map(
@@ -108,6 +108,13 @@ export const store = defineStore('store', () => {
     localStorage.setItem(challengeBaitFishKey, JSON.stringify(challengeBaitCatchAmount.value))
   }
 
+  const configChanged = ref(false)
+
+  watch(calculatorConfiguration, () => {
+    configChanged.value = true
+    console.info('config changed', configChanged.value)
+  })
+
   return {
     results,
     prioritisedFish,
@@ -139,7 +146,8 @@ export const store = defineStore('store', () => {
     challengeBaitCatchAmount,
     setChallengeBaitCatchAmount,
     getChallengeBaitCatchAmount,
-    saveChallengeBaitCatchAmounts
+    saveChallengeBaitCatchAmounts,
+    configChanged
   }
 })
 

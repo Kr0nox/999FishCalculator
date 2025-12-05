@@ -27,7 +27,7 @@ function getBiteTimeMultiplier(bait: Bait): number {
 export function getTimeToBite(tackles: Tackle[], fishingLevel: number, bait: Bait): number {
   let min = 0.6
   let max = 30
-  max -= tackles.filter((t) => t == 'Dressed Spinner').length * 10
+  max -= tackles.filter((t) => t == 'Dressed Spinner').length * 7.5
   max -= fishingLevel * 0.25
   const multiplier = getBiteTimeMultiplier(bait)
   max *= multiplier

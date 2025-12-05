@@ -1,5 +1,8 @@
 <template>
-  <ExpandableContainer class="overflow-visible! bg-slate-100">
+  <ExpandableContainer
+    class="overflow-visible! bg-slate-100"
+    :class="{ 'opacity-80': store().configChanged }"
+  >
     <template #title>
       <div class="flex w-full gap-2">
         <span class="flex-1">Chests</span>
