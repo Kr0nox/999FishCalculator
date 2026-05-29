@@ -54,7 +54,9 @@ function getTimePerCatch(fish: CalculatorResults): number | undefined {
     return time / catchAmount
   }
   if (store().bait.name == 'Wild') {
-    return time / 1.25
+    const chanceForDouble = 0.25 + store().dailyLuck / 2.0
+    const catchAmount = 1 * (1 - chanceForDouble) + 2 * chanceForDouble
+    return time / catchAmount
   }
   return time
 }
