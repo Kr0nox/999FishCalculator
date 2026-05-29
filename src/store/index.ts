@@ -93,6 +93,7 @@ export const store = defineStore('store', () => {
       catchTime.value,
       timeToBite.value,
       castingOverhead.value,
+      results.value,
       cancelChests.value
         ? { cancelTime: chestCancelTime.value, chestChance: chestChance.value }
         : undefined,

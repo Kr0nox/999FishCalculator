@@ -26,3 +26,7 @@ export function getFishParameters(id: CalcFishKey): FishParameters | null {
 export function getFishIds(): CalcFishKey[] {
   return Object.keys(fishData) as CalcFishKey[]
 }
+
+export function extractCalcFishId(id: string): CalcFishKey | undefined {
+  return id.match(/(\d+|Goby)/)?.[0] as CalcFishKey | undefined
+}

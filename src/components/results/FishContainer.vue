@@ -32,6 +32,7 @@ import { computed } from 'vue'
 import { Quality } from '@/model'
 import { getChanceForQuality } from '@/math/Quality'
 import SwitchComponent from '../base/SwitchComponent.vue'
+import { extractCalcFishId } from '@/fishcalc/lib/fishdata.ts'
 
 defineProps({
   fish: {
@@ -44,6 +45,9 @@ function getTimePerCatch(fish: CalculatorResults): number | undefined {
   const time = store().strategy.calculateTimePerCatch(fish)
   if (time === undefined) {
     return undefined
+  }
+  if (extractCalcFishId(fish.Id) === undefined) {
+    return time
   }
 
   if (store().bait.name == 'Challenge') {

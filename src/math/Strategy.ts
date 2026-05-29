@@ -1,4 +1,5 @@
 import type { CalculatorResults } from '@/fishcalc'
+import { extractCalcFishId } from '@/fishcalc/lib/fishdata'
 import { checkIdEquality } from '@/model/Fish'
 
 abstract class Strategy {
@@ -7,7 +8,8 @@ abstract class Strategy {
   constructor(
     protected catchTime: number,
     protected timeToBite: number,
-    protected catchOverhead: number
+    protected catchOverhead: number,
+    protected results: CalculatorResults[]
   ) {}
   /**
    * Calculates the time a single cast takes
@@ -19,13 +21,21 @@ abstract class Strategy {
 }
 
 class DefaultStrategy extends Strategy {
-  constructor(catchTime: number, timeToBite: number, catchOverhead: number) {
-    super(catchTime, timeToBite, catchOverhead)
+  constructor(
+    catchTime: number,
+    timeToBite: number,
+    catchOverhead: number,
+    results: CalculatorResults[]
+  ) {
+    super(catchTime, timeToBite, catchOverhead, results)
     this.timePerCast = this.calculateTimePerCast()
   }
 
   calculateTimePerCast() {
-    const timePerCatch = this.catchTime + this.timeToBite + this.catchOverhead
+    const fishChance = arrayChance(
+      this.results.filter((f) => extractCalcFishId(f.Id) !== undefined)
+    )
+    const timePerCatch = fishChance * this.catchTime + this.timeToBite + this.catchOverhead
     return timePerCatch
   }
 
@@ -34,31 +44,39 @@ class DefaultStrategy extends Strategy {
   }
 }
 class CancelOtherFishStrategy extends Strategy {
-  private priorityChance: number
-
   constructor(
     private cancelTime: number,
     private prioritisedFish: CalculatorResults[],
     catchTime: number,
     timeToBite: number,
-    catchOverhead: number
+    catchOverhead: number,
+    results: CalculatorResults[]
   ) {
-    super(catchTime, timeToBite, catchOverhead)
-    this.priorityChance = prioritisedFish.reduce((acc, fish) => acc + fish.finalChance, 0)
+    super(catchTime, timeToBite, catchOverhead, results)
     this.timePerCast = this.calculateTimePerCast()
   }
 
   calculateTimePerCast() {
     const timePerNonPriorityCatch = this.cancelTime + this.timeToBite + this.catchOverhead
     const timePerPriorityCatch = this.catchTime + this.timeToBite + this.catchOverhead
+    const timeNonFishItems = this.timeToBite + this.catchOverhead
+    const prioritisedFishChance = arrayChance(this.prioritisedFish)
+    const nonFishChance = arrayChance(
+      this.results.filter((f) => extractCalcFishId(f.Id) === undefined)
+    )
+    const nonPriorityFishChance = 1 - (prioritisedFishChance + nonFishChance)
     return (
-      this.priorityChance * timePerPriorityCatch +
-      (1 - this.priorityChance) * timePerNonPriorityCatch
+      prioritisedFishChance * timePerPriorityCatch +
+      nonPriorityFishChance * timePerNonPriorityCatch +
+      nonFishChance * timeNonFishItems
     )
   }
 
   calculateTimePerCatch(fish: CalculatorResults) {
-    if (!this.prioritisedFish.find((f) => checkIdEquality(f.Id, fish.Id))) {
+    if (
+      !this.prioritisedFish.find((f) => checkIdEquality(f.Id, fish.Id)) &&
+      extractCalcFishId(fish.Id) !== undefined
+    ) {
       return undefined
     }
     return this.timePerCast / fish.finalChance
@@ -71,26 +89,39 @@ class CancelNoChestStrategy extends Strategy {
     private chestChance: number,
     catchTime: number,
     timeToBite: number,
-    catchOverhead: number
+    catchOverhead: number,
+    results: CalculatorResults[]
   ) {
-    super(catchTime, timeToBite, catchOverhead)
+    super(catchTime, timeToBite, catchOverhead, results)
     this.timePerCast = this.calculateTimePerCast()
   }
 
   calculateTimePerCast() {
     const timePerNoChest = this.cancelTime + this.timeToBite + this.catchOverhead
     const timePerChest = this.catchTime + this.timeToBite + this.catchOverhead
-    return this.chestChance * timePerChest + (1 - this.chestChance) * timePerNoChest
+    const timePerNonFishItem = this.timeToBite + this.catchOverhead
+    const fishChance = arrayChance(
+      this.results.filter((f) => extractCalcFishId(f.Id) !== undefined)
+    )
+    const actualChestChance = fishChance * this.chestChance
+    const nonFishChance = 1 - fishChance
+    const cancelChance = 1 - (actualChestChance + nonFishChance)
+    return (
+      this.chestChance * timePerChest +
+      nonFishChance * timePerNonFishItem +
+      cancelChance * timePerNoChest
+    )
   }
 
   calculateTimePerCatch(fish: CalculatorResults) {
+    if (extractCalcFishId(fish.Id) === undefined) {
+      return this.timePerCast / fish.finalChance
+    }
     return this.timePerCast / (fish.finalChance * this.chestChance)
   }
 }
 
 class CancelNoChestOtherFishStrategy extends Strategy {
-  private priorityChance: number
-
   constructor(
     private fishCancelTime: number,
     private prioritisedFish: CalculatorResults[],
@@ -98,28 +129,40 @@ class CancelNoChestOtherFishStrategy extends Strategy {
     private chestChance: number,
     catchTime: number,
     timeToBite: number,
-    catchOverhead: number
+    catchOverhead: number,
+    results: CalculatorResults[]
   ) {
-    super(catchTime, timeToBite, catchOverhead)
-    this.priorityChance = prioritisedFish.reduce((acc, fish) => acc + fish.finalChance, 0)
+    super(catchTime, timeToBite, catchOverhead, results)
     this.timePerCast = this.calculateTimePerCast()
   }
 
   calculateTimePerCast() {
+    const fishChance = arrayChance(
+      this.results.filter((f) => extractCalcFishId(f.Id) !== undefined)
+    )
+    const nonFishChance = 1 - fishChance
+    const priorityFishChance = arrayChance(this.prioritisedFish)
+    const nonPriorityFishChance = 1 - (priorityFishChance + nonFishChance)
+
     const timeRightFishWithChest = this.catchTime + this.timeToBite + this.catchOverhead
     const timeRightFishNoChest = this.chestCancelTime + this.timeToBite + this.catchOverhead
     const timeWrongFishWithChest = this.fishCancelTime + this.timeToBite + this.catchOverhead
     const timeWrongFishNoChest =
       Math.min(this.fishCancelTime, this.chestCancelTime) + this.timeToBite + this.catchOverhead
+    const timeNonFish = this.timeToBite + this.catchOverhead
     return (
-      this.priorityChance * this.chestChance * timeRightFishWithChest +
-      this.priorityChance * (1 - this.chestChance) * timeRightFishNoChest +
-      (1 - this.priorityChance) * this.chestChance * timeWrongFishWithChest +
-      (1 - this.priorityChance) * (1 - this.chestChance) * timeWrongFishNoChest
+      priorityFishChance * this.chestChance * timeRightFishWithChest +
+      priorityFishChance * (1 - this.chestChance) * timeRightFishNoChest +
+      nonPriorityFishChance * this.chestChance * timeWrongFishWithChest +
+      nonPriorityFishChance * (1 - this.chestChance) * timeWrongFishNoChest +
+      nonFishChance * timeNonFish
     )
   }
 
   calculateTimePerCatch(fish: CalculatorResults) {
+    if (extractCalcFishId(fish.Id) === undefined) {
+      return this.timePerCast / fish.finalChance
+    }
     if (!this.prioritisedFish.find((f) => checkIdEquality(f.Id, fish.Id))) {
       return undefined
     }
@@ -141,6 +184,7 @@ export function strategyFactory(
   catchTime: number,
   timeToBite: number,
   catchOverhead: number,
+  result: CalculatorResults[],
   chest?: ChestStrategyInformation,
   fish?: FishStrategyInformation
 ): Strategy {
@@ -152,7 +196,8 @@ export function strategyFactory(
       chest.chestChance,
       catchTime,
       timeToBite,
-      catchOverhead
+      catchOverhead,
+      result
     )
   } else if (fish) {
     return new CancelOtherFishStrategy(
@@ -160,7 +205,8 @@ export function strategyFactory(
       fish.prioritisedFish,
       catchTime,
       timeToBite,
-      catchOverhead
+      catchOverhead,
+      result
     )
   } else if (chest) {
     return new CancelNoChestStrategy(
@@ -168,9 +214,14 @@ export function strategyFactory(
       chest.chestChance,
       catchTime,
       timeToBite,
-      catchOverhead
+      catchOverhead,
+      result
     )
   } else {
-    return new DefaultStrategy(catchTime, timeToBite, catchOverhead)
+    return new DefaultStrategy(catchTime, timeToBite, catchOverhead, result)
   }
+}
+
+function arrayChance(fish: CalculatorResults[]) {
+  return fish.map((f) => f.finalChance).reduce((a, b) => a + b, 0)
 }
