@@ -7,6 +7,7 @@ import {
 } from './lib/calculateChance.ts'
 import { getFishParameters } from './lib/fishdata.ts'
 import { getFishFromLocationAndSeason } from './lib/locationdata.ts'
+import { simulate } from './simulation.ts'
 import type {
   AppendedFish,
   BobberArea,
@@ -39,7 +40,7 @@ interface TimeLessConfiguration {
   luckBuffs: number
 }
 
-interface InternalConfiguration extends TimeLessConfiguration {
+export interface InternalConfiguration extends TimeLessConfiguration {
   timeOfDay: number
 }
 
@@ -201,7 +202,7 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
     const rainbowTrout = appendedFishData.filter(
       (fish) => fish.Condition && fish.Condition.includes('TroutDerby')
     )
-    if (rainbowTrout[0]) rainbowTrout[0].displayname = 'Rainbow Trout (from event)'
+    if (rainbowTrout[0]) rainbowTrout[0].displayname = 'Rainbow Trout'
     tempFishParamArray.concat(rainbowTrout)
   } else {
     const noTroutDerbyTrout = tempFishParamArray.filter(
@@ -230,7 +231,7 @@ export function getFilteredFishData(c: InternalConfiguration, appendedFishData: 
       }
     }
     for (const i in squid) {
-      if (squid[i]) squid[i].displayname = 'Squid (from event)'
+      if (squid[i]) squid[i].displayname = 'Squid'
     }
     tempFishParamArray.concat(squid)
   } else {
@@ -521,7 +522,69 @@ export function getChance(
   }
 }
 
-export function getChances(configuration: Configuration) {
+export function getSimulationChances(configuration: Configuration) {
+  if (configuration.selectedLocation === 'UndergroundMine') {
+    return getCalculatorChances(configuration)
+  }
+
+  const chances: Record<string, CalculatorResults[]> = {}
+
+  const appendedFishData = getAppendedFishData(
+    getFishFromLocationAndSeason(configuration.selectedLocation, configuration.selectedSeason)
+  )
+  let divisor = 0
+  if (configuration.selectedSeason == 'MagicBait') {
+    const c = { ...configuration, timeOfDay: 600 }
+    const magicChances = simulate(getFilteredFishData(c, appendedFishData), c)
+    for (const fish of magicChances) {
+      if (!chances[fish.Id]) {
+        chances[fish.Id] = []
+      }
+      chances[fish.Id].push(fish)
+    }
+    divisor = 1
+  } else {
+    const endTime =
+      configuration.startTime == configuration.endTime
+        ? configuration.startTime + 1
+        : configuration.endTime
+    const runCount = Math.min(Math.floor((endTime - configuration.startTime) / 100), 1)
+    const simCount = Math.max(Math.ceil(10000 / runCount), 1000)
+    for (let t = configuration.startTime; t < endTime; t += 100) {
+      const c = { ...configuration, timeOfDay: t }
+      const timeChances = simulate(getFilteredFishData(c, appendedFishData), c, simCount)
+      for (const fish of timeChances) {
+        if (!chances[fish.Id]) {
+          chances[fish.Id] = []
+        }
+        chances[fish.Id].push(fish)
+      }
+      divisor++
+    }
+  }
+
+  const finalChances: CalculatorResults[] = []
+  for (const [id, fishChances] of Object.entries(chances)) {
+    const totalChance = fishChances.reduce((sum, fish) => sum + fish.finalChance, 0)
+    const averageChance = totalChance / divisor
+    finalChances.push({
+      Id: id,
+      displayname: fishChances[0].displayname,
+      finalChance: averageChance
+    })
+  }
+  const remainder = 1 - finalChances.map((f) => f.finalChance).reduce((a, b) => a + b)
+  finalChances.push({
+    Id: 'trash',
+    displayname: 'Trash',
+    finalChance: remainder
+  })
+  return finalChances
+    .filter((f) => f.finalChance >= 0.00005)
+    .sort((a, b) => b.finalChance - a.finalChance)
+}
+
+export function getCalculatorChances(configuration: Configuration) {
   const chances: Record<string, CalculatorResults[]> = {}
 
   const appendedFishData = getAppendedFishData(

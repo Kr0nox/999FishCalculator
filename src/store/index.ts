@@ -1,4 +1,9 @@
-import { getChances, type CheckedItems, type Configuration } from '@/fishcalc'
+import {
+  getCalculatorChances,
+  getSimulationChances,
+  type CheckedItems,
+  type Configuration
+} from '@/fishcalc'
 import type { CalcSeason } from '@/fishcalc/types'
 import { getTimeToBite } from '@/math/BiteTime'
 import { getChestChance } from '@/math/ChestChance'
@@ -70,7 +75,12 @@ export const store = defineStore('store', () => {
   const cancelOtherFishTime = ref(2)
   const prioritisedFish = ref<Fish[]>([])
 
-  const results = computed(() => getChances(calculatorConfiguration.value))
+  const doSimulation = ref(false)
+  const results = computed(() =>
+    doSimulation.value
+      ? getSimulationChances(calculatorConfiguration.value)
+      : getCalculatorChances(calculatorConfiguration.value)
+  )
 
   const prioritisedChanceFish = computed(() =>
     prioritisedFish.value.map(
@@ -139,7 +149,8 @@ export const store = defineStore('store', () => {
     challengeBaitCatchAmount,
     setChallengeBaitCatchAmount,
     getChallengeBaitCatchAmount,
-    saveChallengeBaitCatchAmounts
+    saveChallengeBaitCatchAmounts,
+    doSimulation
   }
 })
 

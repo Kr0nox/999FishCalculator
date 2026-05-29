@@ -1,7 +1,10 @@
 <template>
   <ContainerComponent class="bg-slate-100 p-2!">
-    <div class="flex flex-col gap-2 md:max-h-full md:overflow-auto">
+    <div class="flex flex-col md:max-h-full md:overflow-auto">
       <h1 class="text-xl font-bold">Fish</h1>
+      <div class="mb-2 flex items-center gap-1">
+        Calculator<SwitchComponent v-model="store().doSimulation" />Simulation
+      </div>
       <div class="flex flex-col text-sm">
         <span>Average Time to Bite: {{ store().timeToBite.toFixed(2) }} seconds</span>
         <span
@@ -28,6 +31,7 @@ import { store } from '@/store'
 import { computed } from 'vue'
 import { Quality } from '@/model'
 import { getChanceForQuality } from '@/math/Quality'
+import SwitchComponent from '../base/SwitchComponent.vue'
 
 defineProps({
   fish: {
