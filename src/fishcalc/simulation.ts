@@ -1,5 +1,6 @@
 import { getFilteredFishData, type CalculatorResults, type InternalConfiguration } from './index'
-import type { AppendedFish } from './types'
+import { getFishParameters } from './lib/fishdata'
+import type { AppendedFish, CalcFishKey } from './types'
 
 interface CountedFish extends CalculatorResults {
   weight: number
@@ -62,7 +63,24 @@ export function simulate(
   for (const fish of countedFish) {
     fish.finalChance = fish.count / simCount
   }
-  return countedFish
+  const result: CalculatorResults[] = []
+  for (const f of countedFish) {
+    if (f.Id.includes('|')) {
+      const allFishIds = f.Id.split('|')
+      const chance = (f.finalChance /= allFishIds.length)
+      for (const id of allFishIds) {
+        const newFish = getFishParameters((id.match(/(\d+|Goby)/)?.[0] ?? '') as CalcFishKey)
+        result.push({
+          finalChance: chance,
+          Id: id,
+          displayname: newFish?.name ?? 'unknown fish'
+        })
+      }
+    } else {
+      result.push(f)
+    }
+  }
+  return result
 
   function run(): CountedFish | undefined {
     sort(countedFish)
