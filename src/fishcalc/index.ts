@@ -548,7 +548,7 @@ export function getSimulationChances(configuration: Configuration) {
       configuration.startTime == configuration.endTime
         ? configuration.startTime + 1
         : configuration.endTime
-    const runCount = Math.min(Math.floor((endTime - configuration.startTime) / 100), 1)
+    const runCount = Math.max(Math.floor((endTime - configuration.startTime) / 100), 1)
     const simCount = Math.max(Math.ceil(10000 / runCount), 1000)
     for (let t = configuration.startTime; t < endTime; t += 100) {
       const c = { ...configuration, timeOfDay: t }
