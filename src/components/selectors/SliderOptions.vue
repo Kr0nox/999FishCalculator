@@ -8,6 +8,9 @@
         label="Water depth:"
         :display-function="sliderToLvl"
       />
+      <p v-if="depth > maxDepth" class="-mt-3 text-sm text-yellow-600">
+        <FontAwesomeIcon :icon="faTriangleExclamation" /> Depth here only goes up to: {{ maxDepth }}
+      </p>
       <SliderComponent v-model="store().fishingLevel" :min="0" :max="19" label="Fishing Level:" />
       <SliderComponent v-model="store().luck" :min="0" :max="13" label="Luck Buffs:" />
       <LuckSelector />
@@ -21,11 +24,16 @@ import SliderComponent from '../base/SliderComponent.vue'
 import ContainerComponent from '../ContainerComponent.vue'
 import { store } from '@/store'
 import LuckSelector from './LuckSelector.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { getMaxDepth } from '@/model/location.ts'
 
 const depth = computed({
   get: () => lvlToSlider(store().depth),
   set: (i: number) => (store().depth = sliderToLvl(i))
 })
+
+const maxDepth = computed(() => getMaxDepth(store().location))
 
 function sliderToLvl(i: number) {
   if (i == 4) return 5

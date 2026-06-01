@@ -145,3 +145,30 @@ export function getCalculatorLocation(l: Location): CalcLocation {
     mineArea
   }
 }
+
+export function getMaxDepth(l: Location): number {
+  if (l.location === 'Submarine') {
+    return 2
+  }
+  if (l.location === 'Cindersap Forest') {
+    if (l.subLocation === 'Waterfall') {
+      return 3
+    }
+  }
+  if (l.location === 'Secret Woods') {
+    return 3
+  }
+
+  if (l.location === 'Desert') {
+    return 2
+  }
+  if (l.location === 'Ginger Island') {
+    if (l.subLocation === 'North') {
+      return 2
+    } else if (l.subLocation === 'West (River)') {
+      return 3
+    }
+  }
+
+  return 5
+}
