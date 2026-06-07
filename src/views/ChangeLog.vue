@@ -9,6 +9,38 @@
       <h1 class="text-2xl font-bold">Changelog</h1>
     </div>
     <main>
+      <h2>2026/06/07</h2>
+      <div>
+        <ul>
+          <li>The calculator now remembers the last fish entered for targeted bait</li>
+        </ul>
+      </div>
+      <h2>2026/06/01</h2>
+      <div>
+        <ul>
+          <li>
+            Added a simulation mode, that can often give more accurate results, especially with
+            targeted bait
+          </li>
+          <li>
+            Items that are not fish (jellies, trash, Fossilized Spine, ...) are now handled more
+            accurately. This means: using challenge bait does not show their results as getting 3 of
+            them, the minigame is no longer considered in the time for them.
+            <i
+              >This leads to lower time amounts for all fish across the board, depending on the
+              amount of non fish, it might be a significant amount</i
+            >
+          </li>
+          <li>
+            Added some tooltips (more to come in the future) to explain what the different times
+            mean
+          </li>
+          <li>
+            Added a warning if your depth is larger than the maximum depth you can get in that
+            location
+          </li>
+        </ul>
+      </div>
       <h2>2025/11/07</h2>
       <div>
         Add daily luck
