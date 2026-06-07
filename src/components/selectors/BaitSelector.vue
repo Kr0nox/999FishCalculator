@@ -58,7 +58,7 @@
           <input
             v-show="store().bait.name == 'Targeted'"
             ref="targetedTypeInput"
-            v-model="(store().bait as TargetedBait).fish"
+            v-model="targetedBaitFishType"
             class="w-32 rounded border border-gray-300 bg-white px-1 text-sm"
             placeholder="Fish"
             @click="cancelEvent"
@@ -74,7 +74,7 @@ import type { Bait, TargetedBait } from '@/model'
 import ContainerComponent from '../ContainerComponent.vue'
 import { store } from '@/store'
 import { BaitImages, getFishImage } from '@/model/images'
-import { computed, onMounted, ref, useTemplateRef } from 'vue'
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import autocomplete from 'autocompleter'
 import { BaitableFish } from '@/model/Fish'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -87,10 +87,16 @@ const targetedBaitImage = computed(() => {
   if (store().bait.name !== 'Targeted') {
     return BaitImages['Targeted']
   }
-  return getFishImage((store().bait as TargetedBait).fish) ?? BaitImages['Targeted']
+  return getFishImage(targetedBaitFishType.value) ?? BaitImages['Targeted']
 })
 
 const targetedTypeInput = useTemplateRef('targetedTypeInput')
+const targetedBaitFishType = ref('')
+watch(targetedBaitFishType, (newValue) => {
+  if (store().bait.name === 'Targeted') {
+    ;(store().bait as TargetedBait).fish = newValue
+  }
+})
 
 const showChallengeBaitModifier = ref(false)
 
@@ -114,7 +120,7 @@ onMounted(() => {
     },
     onSelect: (item) => {
       if (store().bait.name === 'Targeted') {
-        ;(store().bait as TargetedBait).fish = item.label ?? ''
+        targetedBaitFishType.value = item.label ?? ''
       }
     },
     minLength: -1,
