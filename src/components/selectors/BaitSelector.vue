@@ -50,7 +50,7 @@
       <ContainerComponent
         :class="store().bait.name == 'Targeted' ? 'border-red-600! bg-red-400' : 'bg-slate-100'"
         class="cursor-pointer"
-        @click="store().bait = { name: 'Targeted', fish: '' }"
+        @click="store().bait = { name: 'Targeted', fish: targetedBaitFishType }"
       >
         <div class="flex items-center gap-2">
           <img :src="targetedBaitImage" class="h-4" />
