@@ -19,10 +19,10 @@
 
 <script setup lang="ts">
 import type { CalculatorResults } from '@/fishcalc'
+import { extractCalcFishId } from '@/fishcalc/lib/fishdata'
 import { getFishImage } from '@/model/images'
+import { store } from '@/store'
 import { computed, type PropType } from 'vue'
-
-type SecondaryInfo = { kind: 'perStack' } | { kind: 'forTime'; time: number }
 
 const props = defineProps({
   fish: {
@@ -33,33 +33,58 @@ const props = defineProps({
     type: Number,
     default: undefined
   },
-  secondaryInformation: {
-    type: Object as PropType<SecondaryInfo>,
-    default: () => ({ kind: 'perStack' })
+  chanceForFish: {
+    type: Number,
+    required: true
   }
 })
 
-const primaryInformationText = computed(() => {
+const normalPrimaryInformationText = computed(() => {
   if (props.timePerCatch === undefined) {
     return 'Fish will not be caught'
   }
   return `${props.timePerCatch.toFixed(2)} s/Fish`
 })
 
-const secondaryInformationText = computed(() => {
+const normalSecondaryInformationText = computed(() => {
   if (props.timePerCatch === undefined) {
     return undefined
   }
-  if (props.secondaryInformation.kind == 'perStack') {
-    const totalTime = props.timePerCatch * 999
-    const timeInHours = (totalTime / 3600).toFixed(2)
-    return `${timeInHours} h/Stack`
-  }
-  if (props.secondaryInformation.kind == 'forTime') {
-    const catches = Math.round(props.secondaryInformation.time / props.timePerCatch)
-    const hours = (props.secondaryInformation.time / 3600).toFixed(2)
-    return `${catches} in ${hours} h`
-  }
-  return ''
+  const totalTime = props.timePerCatch * 999
+  const timeInHours = (totalTime / 3600).toFixed(2)
+  return `${timeInHours} h/Stack`
 })
+
+const chanceOutOfFishes = computed(() => props.fish.finalChance / props.chanceForFish)
+const perBlessingDay = computed(() => {
+  let baseExpectedPerCast = chanceOutOfFishes.value
+  if (store().bait.name == 'Challenge') {
+    const catchAmount = store().getChallengeBaitCatchAmount(props.fish.Id)
+    baseExpectedPerCast *= catchAmount
+  }
+  if (store().bait.name == 'Wild') {
+    const chanceForDouble = 0.25 + store().dailyLuck / 2.0
+    const catchAmount = 1 * (1 - chanceForDouble) + 2 * chanceForDouble
+    baseExpectedPerCast *= catchAmount
+  }
+
+  return baseExpectedPerCast * 3
+})
+const blessingPrimaryInfo = computed(() =>
+  extractCalcFishId(props.fish.Id) !== undefined
+    ? `${perBlessingDay.value.toFixed(2)} / blessing`
+    : 'Not effected by blessing'
+)
+const blessingSecondaryInfo = computed(() =>
+  extractCalcFishId(props.fish.Id) !== undefined
+    ? `${(999 / perBlessingDay.value).toFixed(2)} blessings/stack`
+    : undefined
+)
+
+const primaryInformationText = computed(() =>
+  store().blessingMode ? blessingPrimaryInfo.value : normalPrimaryInformationText.value
+)
+const secondaryInformationText = computed(() =>
+  store().blessingMode ? blessingSecondaryInfo.value : normalSecondaryInformationText.value
+)
 </script>

@@ -9,6 +9,16 @@
       <h1 class="text-2xl font-bold">Changelog</h1>
     </div>
     <main>
+      <h2>2026/07/23</h2>
+      <div>
+        <ul>
+          <li>Blessing of the Waters Mode added</li>
+          <li>
+            The calculator now actually remembers the last fish entered for targeted bait (bug fix
+            yippie)
+          </li>
+        </ul>
+      </div>
       <h2>2026/06/07</h2>
       <div>
         <ul>

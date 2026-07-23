@@ -119,6 +119,8 @@ export const store = defineStore('store', () => {
     localStorage.setItem(challengeBaitFishKey, JSON.stringify(challengeBaitCatchAmount.value))
   }
 
+  const blessingMode = ref(false)
+
   return {
     results,
     prioritisedFish,
@@ -151,7 +153,8 @@ export const store = defineStore('store', () => {
     setChallengeBaitCatchAmount,
     getChallengeBaitCatchAmount,
     saveChallengeBaitCatchAmounts,
-    doSimulation
+    doSimulation,
+    blessingMode
   }
 })
 
