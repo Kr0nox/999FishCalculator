@@ -9,6 +9,10 @@
       <h1 class="text-2xl font-bold">Changelog</h1>
     </div>
     <main>
+      <h2>2026/09/10</h2>
+      <ul>
+        <li>Fix bug where Cast Time and Catch Time were the same</li>
+      </ul>
       <h2>2026/07/23</h2>
       <div>
         <ul>

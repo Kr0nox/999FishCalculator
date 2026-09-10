@@ -62,7 +62,7 @@
           <template #default>
             <div class="flex items-center gap-2">
               <label class="w-21">Catch Time:</label>
-              <NumberInput v-model="store().castingOverhead" />
+              <NumberInput v-model="store().catchTime" />
               <span>seconds</span>
             </div>
           </template>
