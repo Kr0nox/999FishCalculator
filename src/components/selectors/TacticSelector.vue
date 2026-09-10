@@ -86,6 +86,22 @@
         </ToolTipComponent>
       </div>
     </div>
+    <div class="mt-2 flex flex-col gap-2">
+      <ToolTipComponent class="w-full" direction="right" width-mode="full">
+        <template #default>
+          <SliderComponent
+            v-model="store().catchPercentage"
+            :min="0"
+            :max="1"
+            :step="0.01"
+            label="Catch Chance:"
+            :display-function="sliderToPercent"
+            class="w-full"
+          />
+        </template>
+        <template #tooltip>Chance that you manage to<br />catch a fish in the minigame.</template>
+      </ToolTipComponent>
+    </div>
   </ContainerComponent>
 </template>
 
@@ -96,12 +112,17 @@ import ContainerComponent from '../ContainerComponent.vue'
 import TargetedFishSelector from './TargetedFishSelector.vue'
 import { ref } from 'vue'
 import ToolTipComponent from '../base/ToolTipComponent.vue'
+import SliderComponent from '../base/SliderComponent.vue'
 
 const showSelector = ref(false)
 
 function setShowSelector(value: boolean) {
   if (!store().cancelOtherFish) return
   showSelector.value = value
+}
+
+function sliderToPercent(v: number) {
+  return `${Math.round(v * 100)}%`
 }
 </script>
 

@@ -14,6 +14,7 @@
         <li>Fix bug where Cast Time and Catch Time were the same</li>
         <li>More extensible information display code</li>
         <li>Add targeted bait mode</li>
+        <li>Add slider to specify catch chance</li>
       </ul>
       <h2>2026/07/23</h2>
       <div>

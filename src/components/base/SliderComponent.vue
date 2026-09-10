@@ -34,7 +34,7 @@ defineProps({
     default: ''
   },
   displayFunction: {
-    type: Function as PropType<(i: number) => number>,
+    type: Function as PropType<(i: number) => number | string>,
     default: (i: number) => i
   }
 })

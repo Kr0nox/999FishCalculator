@@ -1,6 +1,13 @@
 <template>
   <div class="group pointer-events-none inline">
-    <div ref="contentRef" class="pointer-events-auto flex w-fit items-center gap-x-1">
+    <div
+      ref="contentRef"
+      class="pointer-events-auto flex items-center gap-x-1"
+      :class="{
+        'w-fit': widthMode === 'fit',
+        'w-full': widthMode === 'full'
+      }"
+    >
       <slot></slot>
       <FontAwesomeIcon
         v-if="showInfoSymbol && $slots.tooltip"
@@ -63,6 +70,10 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 0
+  },
+  widthMode: {
+    type: String as PropType<'fit' | 'full'>,
+    default: 'fit'
   }
 })
 

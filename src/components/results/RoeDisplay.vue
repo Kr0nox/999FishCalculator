@@ -36,9 +36,9 @@ const props = defineProps({
 
 const timePerChest = computed(() => {
   if (store().cancelChests) {
-    return props.timePerCatch ?? Infinity
+    return (props.timePerCatch ?? Infinity) / store().catchPercentage
   }
-  return (props.timePerCatch ?? Infinity) / store().chestChance
+  return (props.timePerCatch ?? Infinity) / store().chestChance / store().catchPercentage
 })
 
 const timePerRoeChest = computed(() => {

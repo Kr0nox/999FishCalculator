@@ -122,7 +122,7 @@ const baitableFishChance = computed(() => baitFish.value.reduce((a, b) => a + b.
 
 const averageTimePerChest = computed(() => {
   const timePerCast = store().strategy.calculateTimePerCast()
-  return timePerCast / (store().chestChance * baitableFishChance.value)
+  return timePerCast / (store().chestChance * baitableFishChance.value) / store().catchPercentage
 })
 const chestsPerHour = computed(() => (1 / averageTimePerChest.value) * 3600)
 

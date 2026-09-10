@@ -37,7 +37,10 @@ export class BlessingResultInfoBuilder extends ResultInfoBuilder {
       return ['Not effected by blessing']
     }
     const baseFishPerDay =
-      (fish.finalChance / this.fishChanceSum) * this.fishCountMultiplier(fish) * 3
+      (fish.finalChance / this.fishChanceSum) *
+      this.fishCountMultiplier(fish) *
+      3 *
+      store().catchPercentage
 
     return [
       `${baseFishPerDay.toFixed(2)} / blessing`,
@@ -63,6 +66,7 @@ export class DefaultResultInfoBuilder extends ResultInfoBuilder {
     if (extractCalcFishId(fish.Id) !== undefined) {
       time /= this.fishCountMultiplier(fish)
     }
+    time /= store().catchPercentage
 
     return this.formStrings(time)
   }
@@ -95,10 +99,11 @@ export class TargetedBaitAwareInfoBuilder extends DefaultResultInfoBuilder {
     if (this.usePreserving) {
       timePerBaitUse *= 2
     }
-    const timePerFish = this.strategy.calculateTimePerCatch(fish) // unit: seconds/fish
+    let timePerFish = this.strategy.calculateTimePerCatch(fish) // unit: seconds/fish
     if (timePerFish === undefined) {
       return ['Fish will not be caught']
     }
+    timePerFish /= store().catchPercentage
     const fishPerBait = timePerBaitUse / timePerFish // unit: (seconds/bait) / (seconds/fish) = fish/bait
     const fishSurplus = fishPerBait - 1 / AVERAGE_BAIT_RETURN // unit: fish/bait
 
