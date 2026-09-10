@@ -21,11 +21,16 @@
             <div class="col-span-3 row-start-1 flex items-center gap-1">
               Calculator<SwitchComponent v-model="store().doSimulation" />Simulation
             </div>
-            <input v-model="store().blessingMode" type="checkbox" />
-            <img
-              src="https://stardewvalleywiki.com/mediawiki/images/thumb/4/43/Blessing_Of_Waters.png/54px-Blessing_Of_Waters.png"
-            />
-            <span>Blessing of Waters</span>
+            <div>
+              <div class="px-1 text-xs">Additional info:</div>
+              <select
+                v-model="resultInfoType"
+                class="rounded-md border border-slate-950 bg-slate-200 px-1"
+              >
+                <option value="default">Default</option>
+                <option value="blessing">Blessing of Waters</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -47,8 +52,7 @@
         v-for="f in fish"
         :key="f.Id"
         :fish="f"
-        :time-per-catch="getTimePerCatch(f)"
-        :chance-for-fish="chanceForFish"
+        :info-text="resultInfoBuilder.buildInfo(f)"
       />
     </div>
   </ContainerComponent>
@@ -63,9 +67,13 @@ import { computed, ref } from 'vue'
 import { Quality } from '@/model'
 import { getChanceForQuality } from '@/math/Quality'
 import SwitchComponent from '../base/SwitchComponent.vue'
-import { extractCalcFishId } from '@/fishcalc/lib/fishdata.ts'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGears } from '@fortawesome/free-solid-svg-icons'
+import {
+  BlessingResultInfoBuilder,
+  DefaultResultInfoBuilder,
+  ResultInfoBuilder
+} from '@/math/ResultInfoBuilder.ts'
 
 const props = defineProps({
   fish: {
@@ -73,30 +81,6 @@ const props = defineProps({
     required: true
   }
 })
-
-function getTimePerCatch(fish: CalculatorResults): number | undefined {
-  const time = store().strategy.calculateTimePerCatch(fish)
-  if (time === undefined) {
-    return undefined
-  }
-  if (extractCalcFishId(fish.Id) === undefined) {
-    return time
-  }
-
-  if (store().bait.name == 'Challenge') {
-    const catchAmount = store().getChallengeBaitCatchAmount(fish.Id)
-    if (catchAmount == 0) {
-      return undefined
-    }
-    return time / catchAmount
-  }
-  if (store().bait.name == 'Wild') {
-    const chanceForDouble = 0.25 + store().dailyLuck / 2.0
-    const catchAmount = 1 * (1 - chanceForDouble) + 2 * chanceForDouble
-    return time / catchAmount
-  }
-  return time
-}
 
 const iridiumChance = computed(() =>
   getChanceForQuality(Quality.IRIDIUM, store().depth, store().fishingLevel, store().tackles)
@@ -108,10 +92,16 @@ function changeSettingsVisibility(e: Event) {
   e.stopPropagation()
   showSettings.value = !showSettings.value
 }
-const chanceForFish = computed(() =>
-  props.fish
-    .filter((f) => extractCalcFishId(f.Id) !== undefined)
-    .map((f) => f.finalChance)
-    .reduce((a, b) => a + b, 0)
-)
+
+const resultInfoType = ref<'default' | 'blessing'>('default')
+
+const resultInfoBuilder = computed<ResultInfoBuilder>(() => {
+  switch (resultInfoType.value) {
+    case 'blessing':
+      return new BlessingResultInfoBuilder(props.fish)
+    case 'default':
+    default:
+      return new DefaultResultInfoBuilder(props.fish, store().strategy)
+  }
+})
 </script>

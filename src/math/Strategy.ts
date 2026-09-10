@@ -2,7 +2,7 @@ import type { CalculatorResults } from '@/fishcalc'
 import { extractCalcFishId } from '@/fishcalc/lib/fishdata'
 import { checkIdEquality } from '@/model/Fish'
 
-abstract class Strategy {
+export abstract class Strategy {
   protected timePerCast!: number
 
   constructor(
