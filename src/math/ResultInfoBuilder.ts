@@ -64,9 +64,50 @@ export class DefaultResultInfoBuilder extends ResultInfoBuilder {
       time /= this.fishCountMultiplier(fish)
     }
 
+    return this.formStrings(time)
+  }
+
+  protected formStrings(time: number): string[] {
     const totalTime = time * 999
     const timeInHours = (totalTime / 3600).toFixed(2)
 
     return [`${time.toFixed(2)} s/Fish`, `${timeInHours} h/Stack`]
+  }
+}
+
+export class TargetedBaitAwareInfoBuilder extends DefaultResultInfoBuilder {
+  constructor(
+    results: CalculatorResults[],
+    strategy: Strategy,
+    private targetedFishId: string | undefined,
+    private usePreserving: boolean
+  ) {
+    super(results, strategy)
+  }
+
+  buildInfo(fish: CalculatorResults): string[] {
+    if (fish.displayname !== this.targetedFishId) {
+      return super.buildInfo(fish)
+    }
+
+    const AVERAGE_BAIT_RETURN = 7.5 // unit: bait/fish
+    let timePerBaitUse = this.strategy.calculateTimePerCast() // unit: seconds/bait
+    if (this.usePreserving) {
+      timePerBaitUse *= 2
+    }
+    const timePerFish = this.strategy.calculateTimePerCatch(fish) // unit: seconds/fish
+    if (timePerFish === undefined) {
+      return ['Fish will not be caught']
+    }
+    const fishPerBait = timePerBaitUse / timePerFish // unit: (seconds/bait) / (seconds/fish) = fish/bait
+    const fishSurplus = fishPerBait - 1 / AVERAGE_BAIT_RETURN // unit: fish/bait
+
+    if (fishSurplus <= 0) {
+      return ['You do not catch enough fish for bait demand']
+    }
+
+    const surplusSecondsPerFish = timePerBaitUse / fishSurplus // unit: (seconds/bait) / (fish/bait) = seconds / fish
+
+    return this.formStrings(surplusSecondsPerFish)
   }
 }

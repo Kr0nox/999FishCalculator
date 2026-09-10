@@ -20,6 +20,14 @@
 
       <input id="pirate" v-model="store().pirateProfession" type="checkbox" name="pirate" />
       <label for="pirate">Pirate Profession</label>
+
+      <input
+        id="preserving"
+        v-model="store().preservingEnchant"
+        type="checkbox"
+        name="preserving"
+      />
+      <label for="preserving">Preserving</label>
     </div>
   </ContainerComponent>
 </template>

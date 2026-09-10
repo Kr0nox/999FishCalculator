@@ -29,6 +29,7 @@
               >
                 <option value="default">Default</option>
                 <option value="blessing">Blessing of Waters</option>
+                <option value="targeted">Targeted Bait Mode</option>
               </select>
             </div>
           </div>
@@ -72,7 +73,8 @@ import { faGears } from '@fortawesome/free-solid-svg-icons'
 import {
   BlessingResultInfoBuilder,
   DefaultResultInfoBuilder,
-  ResultInfoBuilder
+  ResultInfoBuilder,
+  TargetedBaitAwareInfoBuilder
 } from '@/math/ResultInfoBuilder.ts'
 
 const props = defineProps({
@@ -93,12 +95,25 @@ function changeSettingsVisibility(e: Event) {
   showSettings.value = !showSettings.value
 }
 
-const resultInfoType = ref<'default' | 'blessing'>('default')
+const resultInfoType = ref<'default' | 'blessing' | 'targeted'>('default')
 
 const resultInfoBuilder = computed<ResultInfoBuilder>(() => {
   switch (resultInfoType.value) {
     case 'blessing':
       return new BlessingResultInfoBuilder(props.fish)
+    case 'targeted': {
+      let baitType: string | undefined
+      const bait = store().bait
+      if (bait.name === 'Targeted') {
+        baitType = bait.fish
+      }
+      return new TargetedBaitAwareInfoBuilder(
+        props.fish,
+        store().strategy,
+        baitType,
+        store().preservingEnchant
+      )
+    }
     case 'default':
     default:
       return new DefaultResultInfoBuilder(props.fish, store().strategy)

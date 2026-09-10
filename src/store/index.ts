@@ -106,6 +106,8 @@ export const store = defineStore('store', () => {
     )
   )
 
+  const preservingEnchant = ref(false)
+
   const challengeBaitCatchAmount = ref<Record<string, number>>(
     JSON.parse(localStorage.getItem(challengeBaitFishKey) || '{}')
   )
@@ -151,7 +153,8 @@ export const store = defineStore('store', () => {
     setChallengeBaitCatchAmount,
     getChallengeBaitCatchAmount,
     saveChallengeBaitCatchAmounts,
-    doSimulation
+    doSimulation,
+    preservingEnchant
   }
 })
 
